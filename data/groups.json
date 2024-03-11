@@ -1,0 +1,18 @@
+[
+    {
+        "group1" : {
+            "admin":"admin username",
+            "members":[]
+        }
+    
+    },
+    
+    {
+        "group2" : {
+            "admin":"admin username",
+            "members":[]
+        }
+    
+    }
+    
+]

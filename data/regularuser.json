@@ -1,0 +1,21 @@
+[
+    {
+        "1" : {
+            "username":"username",
+            "password":"password",
+            "type":"regular"  
+                
+
+        }
+    
+    },
+    
+    {
+        "2" : {
+            "username":"username2",
+            "password":"password2",
+            "type":"regular" 
+        }
+    
+    }
+]

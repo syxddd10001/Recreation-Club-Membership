@@ -5,17 +5,54 @@
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
   </head>
-  <body style="background: #d9d9d9;">
+  <body style="background: white;">
     <div align='center'> 
         <div>
             <h1>Login</h1>
         </div>
         
-        
-        <div>
+        <form onsubmit="logIn(event)" action="/tempURL" method="POST">
+          <div class="container" style="width: 25%; padding: 10px; border: 1px solid black;  ">
+            <label for="uName"><b>Username/Email</b></label>
+            <input type="text" name="uName" id="uName">
+            <br><br>
+            <label for="password"><b>Password</b></label>
+            <input type="password" name="password" id="password">
+            <br><br>
+            <input type="submit" value="Login">
+          </div>
+        </form>
 
-        </div>
+        <p>New Member? Sign up Here:</p>
+        <button onclick="window.location.href = 'signup.html';">Sign Up</button>
+
         
+
+        <script>
+            function logIn() {
+
+              event.preventDefault();
+
+              let username = document.getElementById("uName");
+              let password = document.getElementById("password");
+
+              fetch('/tempURL', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uName: username, password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // launch Member pages
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+            
+        </script>
 
         <script>
             

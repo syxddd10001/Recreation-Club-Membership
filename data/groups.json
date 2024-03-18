@@ -1,18 +1,12 @@
 [
     {
         "group1" : {
-            "admin":"admin username",
-            "members":[]
+            "admin":"admin_username",
+            "members": [],
+            "coach":"coach1",
+            "date": "03/26/2024",
+            "time":1400
         }
     
-    },
-    
-    {
-        "group2" : {
-            "admin":"admin username",
-            "members":[]
-        }
-    
-    }
-    
+    }  
 ]

@@ -1,10 +1,11 @@
 [
     {
         "1": {
-            "username": "user1",
-            "name": "Rob Jobs",
+            "username": "admin1",
+            "name": "James Drinkwater",
             "password": "scrypt:32768:8:1$2UNLsJou8Ud2nW92$14d7e059f670f6113cc60c177178aa06a944d3d771d4c05bd19fccc8a0f7185d9ffca7977c739af3635f6f344fa28086a6c40ac0584c2b4ef97442615eb12580",
-            "type": "regulars"
+            "type": "admins"
         }
+    
     }
 ]

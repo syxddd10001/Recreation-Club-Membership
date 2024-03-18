@@ -15,7 +15,7 @@
     
     Windows Powershell
     ```console
-    source .venv/Scripts/activate
+    .venv/Scripts/activate.ps1
     ```
     Windows CMD
     ```console

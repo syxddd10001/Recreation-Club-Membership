@@ -52,7 +52,9 @@ def signup():
 def home():
     if not LOGGED_USER:
         return redirect('/login')
-    
+    if(request.method == 'GET'):
+        if LOGGED_USER:
+            return render_template('home.html', username=LOGGED_USER[0])
     return render_template('home.html')
 
 
@@ -86,8 +88,9 @@ def login_server() -> bool:
     if check_user(user, password, user_type="members"):
         LOGGED_USER = (user, 'members')
         return True
-    
-    return False
+    else:
+         ERROR = "Invalid username or password"
+         return False
 
 def logout_server():
     global LOGGED_USER

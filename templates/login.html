@@ -19,6 +19,13 @@
             <label for="password"><b>Password</b></label>
             <input type="password" name="password" id="password">
             <br><br>
+            <label for="userType"><b>User Type</b></label>
+            <select name="userType" id="userType">
+              <option value="member">Member</option>
+              <option value="coach">Coach</option>
+              <option value="treasurer">Treasurer</option>
+            </select>
+            <br><br>
             <input type="submit" value="Login">
           </div>
         </form>
@@ -41,17 +48,17 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ uName: username, password: password }),
+                body: JSON.stringify({ uName: username, password: password, userType: userType }),
             })
             .then(response => response.json())
             .then(data => {
-                if (data['success']=='true'){
+                if (data.success){
                   console.log(data['username']);
                   window.location.href = "/home";
                   
                 }
                 else{
-                  console.log(data);
+                  console.log(data.error);
                 }
             })
             .catch(error => {

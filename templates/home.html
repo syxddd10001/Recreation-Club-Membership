@@ -9,7 +9,7 @@
     <div align='center'> 
         <div>
             <h1>Recreational Club Membership</h1>
-            <h2>Welcome {user}!</h2>
+            <h2>Welcome <span>{{username}}</span>!</h2>
         </div>
         
         
@@ -20,6 +20,18 @@
 
         <script>
             // implement js method to get the username and render it in the home page
+            fetch('/home', {
+              method: 'GET',
+          })
+          .then(response => response.text())
+          .then(username => {
+            //const parsedData = JSON.parse(data);
+              document.getElementById("username").innerHTML = username
+              // Use the username as needed, e.g., display it in the UI
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
         </script>
   </body>
   

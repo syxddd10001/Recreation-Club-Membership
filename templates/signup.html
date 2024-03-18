@@ -23,12 +23,19 @@
             <label for="password"><b>Create a Password</b></label>
             <input type="password" name="password" id="password">
             <br><br>
+            <label for="userType"><b>User Type</b></label>
+            <select name="userType" id="userType">
+              <option value="member">Member</option>
+              <option value="coach">Coach</option>
+              <option value="treasurer">Treasurer</option>
+            </select>
+            <br><br>
             <input onclick="signUp()" type="submit" value="Sign Up">
           </div>
         </form>
 
         <br>
-        <button onclick="window.location.href = 'login.html';">Back to Login</button>
+        <button onclick="window.location.href = '/login';">Back to Login</button>
         
 
         <script>
@@ -39,19 +46,20 @@
             let name = document.getElementById("name").value;
             let newUsername = document.getElementById("uName").value;
             let newPassword = document.getElementById("password").value;
+            let userType = document.getElementById("userType").value;
             let data = null;
             fetch('/signup', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ name: name, uName: newUsername, password: newPassword }),
+              body: JSON.stringify({ name: name, uName: newUsername, password: newPassword, userType: userType }),
           })
           .then(response => response.json())
           .then(data => {
-            if (data['success']=='true'){
+            if (data.success){
                   console.log(data['username']);
-                  window.location.href = "/login";
+                  window.location.href = "/home";
                   
                 }
                 else{

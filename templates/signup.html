@@ -36,10 +36,10 @@
 
             event.preventDefault();
 
-            let name = document.getElementById("name");
-            let newUsername = document.getElementById("uName");
-            let newPassword = document.getElementById("password");
-
+            let name = document.getElementById("name").value;
+            let newUsername = document.getElementById("uName").value;
+            let newPassword = document.getElementById("password").value;
+            let data = null;
             fetch('/signup', {
               method: 'POST',
               headers: {
@@ -49,7 +49,14 @@
           })
           .then(response => response.json())
           .then(data => {
-              //launch page?
+            if (data['success']=='true'){
+                  console.log(data['username']);
+                  window.location.href = "/login";
+                  
+                }
+                else{
+                  console.log(data);
+                }
           })
           .catch(error => {
               console.error('Error:', error);

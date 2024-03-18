@@ -34,6 +34,7 @@ def login():
             return jsonify({'success': 'true', 'username':LOGGED_USER[0]})
         else:
             return jsonify({'error': ERROR})
+    
     return render_template('login.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -51,6 +52,7 @@ def signup():
 def home():
     if not LOGGED_USER:
         return redirect('/login')
+    
     return render_template('home.html')
 
 
@@ -81,8 +83,8 @@ def login_server() -> bool:
             ERROR="Bad username or password provided"
             return False
 
-    if check_user(user, password, user_type="regulars"):
-        LOGGED_USER = (user, 'regular')
+    if check_user(user, password, user_type="members"):
+        LOGGED_USER = (user, 'members')
         return True
     
     return False
@@ -119,7 +121,7 @@ def signup_server() -> bool:
 
     hashedpassword = generate_password_hash( password, method='scrypt' )
 
-    return write_users(user, name, hashedpassword, 'regulars')
+    return write_users(user, name, hashedpassword, 'members')
 
 def check_user(username: str, password: str, user_type: str) -> bool:
     """Check user method
@@ -147,7 +149,7 @@ def write_users(username :str, name :str, password :str, user_type :str) -> bool
         Returns False otherwise
     """
     try:
-        with open(os.path.join('data', 'regulars.json'), 'r') as f:
+        with open(os.path.join('data', user_type+'.json'), 'r') as f:
             userdata = json.load(f)
     except FileNotFoundError:
         userdata = []
@@ -168,7 +170,7 @@ def write_users(username :str, name :str, password :str, user_type :str) -> bool
                 }
     
     userdata.append(new_user)
-    with open(os.path.join('data', 'regulars.json'), 'w') as f:
+    with open(os.path.join('data', user_type+'.json'), 'w') as f:
         json.dump(userdata, f, indent=4)
 
     return True

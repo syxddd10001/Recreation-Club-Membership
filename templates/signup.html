@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <title>Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
+  </head>
+  <body style="background: white;">
+    <div align='center'> 
+        <div>
+            <h1>Signup</h1>
+        </div>
+        
+        
+        <form onsubmit="signUp()" action="/signup" method="POST">
+          <div class="container" style="border: 1px solid black; width: 300px; padding: 10px">
+            <label for="name"><b>Name</b></label>
+            <input type="text" name="name" id="name">
+            <br><br>
+            <label for="uName"><b>Create a Username</b></label>
+            <input type="text" name="uName" id="uName">
+            <br><br>
+            <label for="password"><b>Create a Password</b></label>
+            <input type="password" name="password" id="password">
+            <br><br>
+            <input onclick="signUp()" type="submit" value="Sign Up">
+          </div>
+        </form>
+
+        <br>
+        <button onclick="window.location.href = 'login.html';">Back to Login</button>
+        
+
+        <script>
+          function signUp() {
+
+            event.preventDefault();
+
+            let name = document.getElementById("name");
+            let newUsername = document.getElementById("uName");
+            let newPassword = document.getElementById("password");
+
+            fetch('/signup', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ name: name, uName: newUsername, password: newPassword }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              //launch page?
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+      }
+        </script>
+  </body>
+  
+</html>

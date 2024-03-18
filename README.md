@@ -44,11 +44,11 @@ or
 python main.py
 ```
 
-
+2. Then go to http://127.0.0.1:5000/ or http://localhost:5000/ with your web browser
 
 ### Directories and Files
 
-main.py -- flask server - contains all route methods 
+main.py -- flask server - contains all route and server methods 
 
 **templates** -- all frontend HTML files - what the user sees
 

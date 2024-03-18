@@ -11,7 +11,7 @@
             <h1>Login</h1>
         </div>
         
-        <form onsubmit="logIn(event)" action="/tempURL" method="POST">
+        <form onsubmit="logIn(event)" action="/login" method="POST">
           <div class="container" style="width: 25%; padding: 10px; border: 1px solid black;  ">
             <label for="uName"><b>Username/Email</b></label>
             <input type="text" name="uName" id="uName">
@@ -24,7 +24,7 @@
         </form>
 
         <p>New Member? Sign up Here:</p>
-        <button onclick="window.location.href = 'signup.html';">Sign Up</button>
+        <button onclick="window.location.href = '/signup';" >Sign Up</button>
 
         
 
@@ -33,10 +33,10 @@
 
               event.preventDefault();
 
-              let username = document.getElementById("uName");
-              let password = document.getElementById("password");
+              let username = document.getElementById("uName").value;
+              let password = document.getElementById("password").value;
 
-              fetch('/tempURL', {
+              fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +45,14 @@
             })
             .then(response => response.json())
             .then(data => {
-                // launch Member pages
+                console.log(data)
+                if (data.success){
+                  window.location.href = "/home";
+                }
+                else{
+                  console.log(data);
+
+                }
             })
             .catch(error => {
                 console.error('Error:', error);

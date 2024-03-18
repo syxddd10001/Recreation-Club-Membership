@@ -1,7 +1,7 @@
 [
     {
         "1" : {
-            "username":"username",
+            "username":"user1",
             "password":"password",
             "type":"regular"  
                 
@@ -12,7 +12,7 @@
     
     {
         "2" : {
-            "username":"username2",
+            "username":"user2",
             "password":"password2",
             "type":"regular" 
         }

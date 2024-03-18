@@ -33,13 +33,20 @@
     pip install -r requirements.txt
     ```
 
+### Run the App
+
+1. Launch the flask server
+```console
+python3 main.py
+```
 
 
-### Directories
 
-**backend** -- all backend python files - basically where the logic of the app is done
+### Directories and Files
 
-**client** -- all frontend HTML files - what the user sees
+main.py -- flask server - contains all route methods 
+
+**templates** -- all frontend HTML files - what the user sees
 
 **data** -- all user data files in JSON format - where we store all user information, like username, password, etc
 

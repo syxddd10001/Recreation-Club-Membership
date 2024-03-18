@@ -35,7 +35,7 @@
 
               let username = document.getElementById("uName").value;
               let password = document.getElementById("password").value;
-
+              let data = null;
               fetch('/login', {
                 method: 'POST',
                 headers: {
@@ -45,13 +45,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-                if (data.success){
+                if (data['success']=='true'){
+                  console.log(data['username']);
                   window.location.href = "/home";
+                  
                 }
                 else{
                   console.log(data);
-
                 }
             })
             .catch(error => {

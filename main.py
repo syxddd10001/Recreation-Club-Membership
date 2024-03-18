@@ -11,6 +11,7 @@ from flask import (Flask,
                    jsonify)
 from flask_cors import CORS
 import json
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 ERROR = ""
@@ -20,6 +21,7 @@ LOGGED_USER = None
 app = Flask(__name__)
 CORS(app)
 
+"""Route methods"""
 
 @app.route('/')
 def index():
@@ -29,19 +31,31 @@ def index():
 def login():
     if request.method == 'POST':
         if login_server():
-            return jsonify({'success': True})
+            return jsonify({'success': 'true', 'username':LOGGED_USER[0]})
         else:
             return jsonify({'error': ERROR})
     return render_template('login.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if request.method == 'POST':
+        if signup_server():
+            return jsonify({'success': 'true'})
+        else:
+            return jsonify({'error': ERROR})
+    
     return render_template('signup.html')
+
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    if not LOGGED_USER:
+        return redirect('/login')
     return render_template('home.html')
 
+
+
+"""Server methods"""
 
 def login_server() -> bool:
     """Login method
@@ -49,15 +63,16 @@ def login_server() -> bool:
         
         Arguments: None
 
-        Return True if the user logs in successfully
-        Returns ERROR message otherwise
+        Returns True if the user logs in successfully
+        Returns False otherwise
     """
     
     global ERROR
-    
+    global LOGGED_USER
+    LOGGED_USER = None
     user = request.json.get('uName')
     password = request.json.get('password')
-    # member_type = request.json.get['member_type']
+    # user_type = request.json.get['member_type']
 
 
     # checking for bad input
@@ -66,17 +81,96 @@ def login_server() -> bool:
             ERROR="Bad username or password provided"
             return False
 
-    userdata = read_users('regulars')
-    print(userdata)
-    for k, v in userdata.items():
-        if v['username'] == user and v['password'] == password:
-            global LOGGED_USER
-            LOGGED_USER = (user, "admin")
+    if check_user(user, password, user_type="regulars"):
+        LOGGED_USER = (user, 'regular')
+        return True
+    
+    return False
 
-    if LOGGED_USER == None:
+def logout_server():
+    global LOGGED_USER
+    LOGGED_USER = None
+
+def signup_server():
+    """Signup method
+        Signs up a new user              
+        
+        Arguments: None
+
+        Returns True if the user signup was successful
+        Returns False otherwise
+    """
+    global ERROR
+    global LOGGED_USER
+    LOGGED_USER = None
+
+    user = request.json.get('uName')
+    password = request.json.get('password')
+    name = request.json.get('name')
+    # member_type = request.json.get['member_type']
+
+    if user == "" or password == "" or name == "":
+        return False
+
+    for char in blacklist:
+        if char in user or char in password or char in name: 
+            ERROR="Bad name, username or password provided"
+            return False
+
+    hashedpassword = generate_password_hash( password, method='scrypt' )
+
+    return write_users(user, name, hashedpassword, 'regulars')
+
+def check_user(username: str, password: str, user_type: str) -> bool:
+    """Check user method
+        Checks if an user with the username and password exist in userdata               
+        
+        Arguments: userdata (dictionary), username (string), password (string)
+
+        Returns True if the user username and combination exist
+        Returns False otherwise
+    """
+    userdata = read_users(user_type)
+    for val in userdata.values():
+        if val['username'] == username and check_password_hash( val['password'], password ):
+            return True
+
+def write_users(username :str, name :str, password :str, user_type :str) -> bool:
+    """Writes user data to file
+        Write user data to ./data/*.json files                 
+        
+        Arguments: username, password, member type (strings)
+
+        Returns True if the write was successful
+        Returns False otherwise
+    """
+    try:
+        with open(os.path.join('data', 'regulars.json'), 'r') as f:
+            userdata = json.load(f)
+    except FileNotFoundError:
+        userdata = []
+    
+    if check_user(username, password, user_type):
+        global ERROR
+        ERROR = "Username already exists"
         return False
     
+
+    new_id = (str(len(userdata) + 1)) 
+    new_user = { new_id : {   
+                    "username":username, 
+                    "name":name,
+                    "password":password,
+                    "type":user_type 
+                    } 
+                }
+    
+    userdata.append(new_user)
+    with open(os.path.join('data', 'regulars.json'), 'w') as f:
+        json.dump(userdata, f, indent=4)
+
     return True
+
 
 def read_users(type :str) -> dict:  
     """Read user data
@@ -110,9 +204,7 @@ def read_users(type :str) -> dict:
     
     return result_dict
     
-    
-
 
 #main function
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

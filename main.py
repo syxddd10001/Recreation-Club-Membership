@@ -165,7 +165,8 @@ def write_users(username :str, name :str, password :str, user_type :str) -> bool
                     "username":username, 
                     "name":name,
                     "password":password,
-                    "type":user_type 
+                    "type":"monthly",
+                    "schedule": []
                     } 
                 }
     

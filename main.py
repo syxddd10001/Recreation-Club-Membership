@@ -20,6 +20,7 @@ LOGGED_USER = None
 app = Flask(__name__)
 CORS(app)
 
+"""Route methods"""
 
 @app.route('/')
 def index():
@@ -29,7 +30,7 @@ def index():
 def login():
     if request.method == 'POST':
         if login_server():
-            return jsonify({'success': True})
+            return jsonify({'success': 'true', 'username':LOGGED_USER[0]})
         else:
             return jsonify({'error': ERROR})
     return render_template('login.html')
@@ -40,8 +41,13 @@ def signup():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    if not LOGGED_USER:
+        return redirect('/login')
     return render_template('home.html')
 
+
+
+"""Server methods"""
 
 def login_server() -> bool:
     """Login method
@@ -49,12 +55,13 @@ def login_server() -> bool:
         
         Arguments: None
 
-        Return True if the user logs in successfully
+        Returns True if the user logs in successfully
         Returns ERROR message otherwise
     """
     
     global ERROR
-    
+    global LOGGED_USER
+    LOGGED_USER = None
     user = request.json.get('uName')
     password = request.json.get('password')
     # member_type = request.json.get['member_type']
@@ -67,16 +74,30 @@ def login_server() -> bool:
             return False
 
     userdata = read_users('regulars')
-    print(userdata)
-    for k, v in userdata.items():
-        if v['username'] == user and v['password'] == password:
-            global LOGGED_USER
-            LOGGED_USER = (user, "admin")
-
-    if LOGGED_USER == None:
-        return False
     
-    return True
+    if check_user(userdata, user, password):
+        LOGGED_USER = (user, 'regular')
+        return True
+    
+    return False
+
+def logout_server():
+    global LOGGED_USER
+    LOGGED_USER = None
+
+def check_user(userdata : dict, username: str, password: str) -> bool:
+    """Check user method
+        Checks if an user with the username and password exist                
+        
+        Arguments: userdata (dictionary), username (string), password (string)
+
+        Returns True if the user username and combination exist
+        Returns False otherwise
+    """
+    for k, v in userdata.items():
+        if v['username'] == username and v['password'] == password:
+            return True
+
 
 def read_users(type :str) -> dict:  
     """Read user data

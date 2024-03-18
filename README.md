@@ -39,6 +39,10 @@
 ```console
 python3 main.py
 ```
+or
+```console
+python main.py
+```
 
 
 

@@ -91,7 +91,7 @@ def logout_server():
     global LOGGED_USER
     LOGGED_USER = None
 
-def signup_server():
+def signup_server() -> bool:
     """Signup method
         Signs up a new user              
         
@@ -134,6 +134,8 @@ def check_user(username: str, password: str, user_type: str) -> bool:
     for val in userdata.values():
         if val['username'] == username and check_password_hash( val['password'], password ):
             return True
+        
+    return False
 
 def write_users(username :str, name :str, password :str, user_type :str) -> bool:
     """Writes user data to file

@@ -73,7 +73,7 @@ def login_server() -> bool:
             ERROR="Bad username or password provided"
             return False
 
-    userdata = read_users('regulars')
+    userdata = read_users('regulars') 
     
     if check_user(userdata, user, password):
         LOGGED_USER = (user, 'regular')
@@ -87,15 +87,15 @@ def logout_server():
 
 def check_user(userdata : dict, username: str, password: str) -> bool:
     """Check user method
-        Checks if an user with the username and password exist                
+        Checks if an user with the username and password exist in userdata               
         
         Arguments: userdata (dictionary), username (string), password (string)
 
         Returns True if the user username and combination exist
         Returns False otherwise
     """
-    for k, v in userdata.items():
-        if v['username'] == username and v['password'] == password:
+    for val in userdata.values():
+        if val['username'] == username and val['password'] == password:
             return True
 
 

@@ -8,25 +8,7 @@
 
     <!-- ______________________________________________________________________________________________________-->
 
-    <style>
-      /* CSS style -> adds space between buttons and content */
-      #Content {
-          margin-top: 20px; /* can adjust number*/
-      }
-      /* CSS style -> adds space for list of clubs */
-      #ClassDetails {
-          margin-top: 20px; /* can adjust number*/
-      }
-      /* CSS style for the white rectangle */
-      .classListContainer {
-          background-color: white;
-          padding: 50px;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
-          width: 30%; /* Adjust the width as needed */
 
-      }
-  </style>
   </head>
 
      <!-- ______________________________________________________________________________________________________-->
@@ -37,86 +19,21 @@
             <h1>Recreational Club Membership</h1>
 
         <button onclick="window.location.href = '/login';" >Log In</button>
-        </div>
-<<<<<<< Updated upstream:templates/index.html
         <button onclick="window.location.href = '/signup';" >Sign Up</button>
-=======
-        
-
-        <div>
-          <h2>Classes</h2>
-          <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
-          <button onclick="createClass()">Create a Class</button> <!-- onclick attribute -->
-          <h2>Classes available</h2>
-      </div>
-
-
-      <!-- white rectangle container for the list of classes -->
-      <div class="classListContainer">
-        <div id="Content"></div>
-       </div>
-
-
-        
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
-        </div>
-
-        <div id="ClassDetails"> <!-- display class details as message-->
->>>>>>> Stashed changes:client/home.html
         </div>
         
+
+
+
+
+
+        
+
         
 
    <!-- ______________________________________________________________________________________________________-->
 
-<<<<<<< Updated upstream:templates/index.html
-=======
-        <script>
-        var classes = []; // store created classes
 
-        function createClass() { // makes a pop up that asks you to enter the name of the class
-
-          var className = prompt("Enter the name of the class:");
-          if (className !== null && className !== "") {
-            document.getElementById("Content").innerText = "You have created the class: " + className;
-
-            var classTime = prompt("Please enter the Date and Time in the format: XX:XX AM/PM | XX / XX / XXXX" ); //get timing, btw need to add a cancel function
-            if (classTime !== null && classTime !== "") {
-                        classes.push({name: className, time: classTime});
-                        displayClasses();
-            
-            }
-        }
-      }
-
-
-
-        function displayClasses() { //adds classes made to a list, if there are no classes it just gives an error
-          var classList = "";
-          if (classes.length === 0) {
-            alert("Sorry, there are no classes! Maybe try creating one.");
-          }
-          else {
-            classList += "<p>Please click on the class for details:</p>";
-            for (var i = 0; i < classes.length; i++) {
-              classList += "<button onclick='showClassDetails(\"" + classes[i].name + "\", \"" + classes[i].time + "\")'>" + classes[i].name + "</button><br>";
-            }
-            document.getElementById("Content").innerHTML = classList
-            }
-
-
-
-          }
-          function showClassDetails(className, classTime) {
-            // print class details in ClassDetails div
-            document.getElementById("ClassDetails").innerHTML = "Details for class: " + className + "<br>Time: " + classTime;
-        }
-
-
-      
-            
-        </script>
->>>>>>> Stashed changes:client/home.html
   </body>
   
 </html>

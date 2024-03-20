@@ -52,11 +52,18 @@ def signup():
 def home():
     if not LOGGED_USER:
         return redirect('/login')
-    if(request.method == 'GET'):
+    if(request.method == 'GET' or request.method == 'POST'):
         if LOGGED_USER:
-            return render_template('home.html', username=LOGGED_USER[0])
-    return render_template('home.html')
-
+            if LOGGED_USER[1] == 'members':
+                return render_template('home.html', username=LOGGED_USER[0])
+            elif LOGGED_USER[1] == 'treasurers':
+                return render_template('home_treasurers.html', username=LOGGED_USER[0])
+            elif LOGGED_USER[1] == 'coaches':
+                return render_template('home_coaches.html', username=LOGGED_USER[0])
+        else:
+            return redirect('/login')
+        
+        
 
 
 """Server methods"""
@@ -76,17 +83,17 @@ def login_server() -> bool:
     LOGGED_USER = None
     user = request.json.get('uName')
     password = request.json.get('password')
-    # user_type = request.json.get['member_type']
+    user_type = request.json.get('userType')
 
 
     # checking for bad input
     for char in blacklist:
-        if char in user or char in password: 
+        if char in user or char in password:
             ERROR="Bad username or password provided"
             return False
 
-    if check_user(user, password, user_type="members"):
-        LOGGED_USER = (user, 'members')
+    if check_user(user, password, user_type):
+        LOGGED_USER = (user, user_type)
         return True
     else:
          ERROR = "Invalid username or password"
@@ -112,7 +119,8 @@ def signup_server() -> bool:
     user = request.json.get('uName')
     password = request.json.get('password')
     name = request.json.get('name')
-    # member_type = request.json.get['member_type']
+    user_type = request.json.get('userType')
+
 
     if user == "" or password == "" or name == "":
         return False
@@ -124,13 +132,13 @@ def signup_server() -> bool:
 
     hashedpassword = generate_password_hash( password, method='scrypt' )
 
-    return write_users(user, name, hashedpassword, 'members')
+    return write_users(user, name, hashedpassword, user_type)
 
 def check_user(username: str, password: str, user_type: str) -> bool:
     """Check user method
         Checks if an user with the username and password exist in userdata               
         
-        Arguments: userdata (dictionary), username (string), password (string)
+        Arguments: username (string), password (string), user_type (string)
 
         Returns True if the user username and combination exist
         Returns False otherwise

@@ -14,16 +14,16 @@
         <form onsubmit="logIn(event)" action="/login" method="POST">
           <div class="container" style="width: 25%; padding: 10px; border: 1px solid black;  ">
             <label for="uName"><b>Username/Email</b></label>
-            <input type="text" name="uName" id="uName">
+            <input type="text" name="uName" id="uName" required  minlength="3" maxlength="32">
             <br><br>
             <label for="password"><b>Password</b></label>
-            <input type="password" name="password" id="password">
+            <input type="password" name="password" id="password" required minlength="3" maxlength="32">
             <br><br>
             <label for="userType"><b>User Type</b></label>
-            <select name="userType" id="userType">
-              <option value="member">Member</option>
-              <option value="coach">Coach</option>
-              <option value="treasurer">Treasurer</option>
+            <select name="userType" id="userType" required>
+              <option value="members">Member</option>
+              <option value="coaches">Coach</option>
+              <option value="treasurers">Treasurer</option>
             </select>
             <br><br>
             <input type="submit" value="Login">
@@ -42,6 +42,7 @@
 
               let username = document.getElementById("uName").value;
               let password = document.getElementById("password").value;
+              let userType = document.getElementById("userType").value;
               let data = null;
               fetch('/login', {
                 method: 'POST',

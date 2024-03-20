@@ -1,4 +1,4 @@
-[ 
+[
     {
         "1": {
             "username": "coach1",
@@ -7,6 +7,14 @@
             "type": "coaches",
             "schedule": []
         }
-    
+    },
+    {
+        "2": {
+            "username": "coach1",
+            "name": "NameX",
+            "password": "scrypt:32768:8:1$2BHNwPxMwht2a3JK$6f006f8847d34572e1145632bb14739d27fcd92a68f3b856ba297edcf1b37278c6adfc67f7e32d823d1e0a7c9ff1342ed6c0aa65152855151c0d4ec7f4be5f97",
+            "type": "monthly",
+            "schedule": []
+        }
     }
 ]

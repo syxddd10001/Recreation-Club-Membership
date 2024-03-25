@@ -1,5 +1,12 @@
 ## Recreational Club Membership
 
+Folder Contents:
+Product Backlog
+
+Test Plan
+
+README.txt
+
 ### How to get started
 
 1. Install Python 3.12.1
@@ -46,7 +53,7 @@ python main.py
 
 2. Then go to http://127.0.0.1:5000/ or http://localhost:5000/ with your web browser
 
-### Directories and Files
+### Directories and Files 
 
 main.py -- flask server - contains all route and server methods 
 

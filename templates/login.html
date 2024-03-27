@@ -27,6 +27,7 @@
             </select>
             <br><br>
             <input type="submit" value="Login">
+            <p id="incorrect"></p>
           </div>
         </form>
 
@@ -60,10 +61,10 @@
                 }
                 else{
                   console.log(data.error);
+                  document.getElementById("incorrect").innerHTML = data.error;
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
             });
         }
             

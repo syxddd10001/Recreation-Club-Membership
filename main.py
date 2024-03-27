@@ -55,11 +55,11 @@ def home():
     if(request.method == 'GET' or request.method == 'POST'):
         if LOGGED_USER:
             if LOGGED_USER[1] == 'members':
-                return render_template('home.html', username=LOGGED_USER[0])
+                return render_template('home.html', userInfo=LOGGED_USER)
             elif LOGGED_USER[1] == 'treasurers':
-                return render_template('home_treasurers.html', username=LOGGED_USER[0])
+                return render_template('home_treasurers.html', userInfo=LOGGED_USER)
             elif LOGGED_USER[1] == 'coaches':
-                return render_template('home_coaches.html', username=LOGGED_USER[0])
+                return render_template('home_coaches.html', userInfo=LOGGED_USER)
         else:
             return redirect('/login')
         

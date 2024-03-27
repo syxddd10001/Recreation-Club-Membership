@@ -16,5 +16,14 @@
             "type": "monthly",
             "schedule": []
         }
+    },
+    {
+        "3": {
+            "username": "temp",
+            "name": "Temp Person",
+            "password": "scrypt:32768:8:1$fQ2pVVZaMFUeUD8K$6e6302c87caf22ec7789643352681dab9b002702a13c52a856f178a9a8688ac04375892339442b8ecd5191a98dd739b680226f069f433d67accdd6a75ebf5068",
+            "type": "monthly",
+            "schedule": []
+        }
     }
 ]

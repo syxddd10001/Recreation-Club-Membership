@@ -12,7 +12,8 @@ from flask import (Flask,
 from flask_cors import CORS
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
-
+sys.path.append("./models")
+from users import Member
 
 ERROR = ""
 blacklist = ['--','"',"'", ';'] # list of invalid characters
@@ -85,6 +86,7 @@ def login_server() -> bool:
     password = request.json.get('password')
     user_type = request.json.get('userType')
 
+    
 
     # checking for bad input
     for char in blacklist:

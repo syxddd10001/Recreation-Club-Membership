@@ -232,12 +232,12 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | None:
     """Dict to User Class 
         Converts a dictionary to user class               
         
-        Arguments: member type (string)
+        Arguments: user (dict)
         Valid arguments: members, regulars, treasurers, coaches, groups
         
 
-        Returns the user data if data is found
-        Returns error if not found
+        Returns Member, Coach or Treasurer class
+        Returns None if 
     """
     if type(user) is not dict:
         return None

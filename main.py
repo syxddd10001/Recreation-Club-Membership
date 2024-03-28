@@ -12,7 +12,8 @@ from flask import (Flask,
 from flask_cors import CORS
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
-
+sys.path.append("./models")
+from users import User, Member, Coach, Treasurer
 
 ERROR = ""
 blacklist = ['--','"',"'", ';'] # list of invalid characters
@@ -31,7 +32,7 @@ def index():
 def login():
     if request.method == 'POST':
         if login_server():
-            return jsonify({'success': 'true', 'username':LOGGED_USER[0]})
+            return jsonify({'success': 'true', 'username':LOGGED_USER.__dict__.get('username')})
         else:
             return jsonify({'error': ERROR})
     
@@ -54,12 +55,14 @@ def home():
         return redirect('/login')
     if(request.method == 'GET' or request.method == 'POST'):
         if LOGGED_USER:
-            if LOGGED_USER[1] == 'members':
-                return render_template('home.html', userInfo=LOGGED_USER)
-            elif LOGGED_USER[1] == 'treasurers':
-                return render_template('home_treasurers.html', userInfo=LOGGED_USER)
-            elif LOGGED_USER[1] == 'coaches':
-                return render_template('home_coaches.html', userInfo=LOGGED_USER)
+            u_type = LOGGED_USER.__dict__['user_type']
+
+            if u_type == 'members':
+                return render_template('home.html', userInfo=jsonify(LOGGED_USER.to_json()))
+            elif u_type == 'treasurers':
+                return render_template('home_treasurers.html', userInfo=jsonify(LOGGED_USER.to_json()))
+            elif u_type == 'coaches':
+                return render_template('home_coaches.html', userInfo=jsonify(LOGGED_USER.to_json()))
         else:
             return redirect('/login')
         
@@ -85,6 +88,7 @@ def login_server() -> bool:
     password = request.json.get('password')
     user_type = request.json.get('userType')
 
+    
 
     # checking for bad input
     for char in blacklist:
@@ -93,7 +97,6 @@ def login_server() -> bool:
             return False
 
     if check_user(user, password, user_type):
-        LOGGED_USER = (user, user_type)
         return True
     else:
          ERROR = "Invalid username or password"
@@ -146,11 +149,13 @@ def check_user(username: str, password: str, user_type: str) -> bool:
     userdata = read_users(user_type)
     for val in userdata.values():
         if val['username'] == username and check_password_hash( val['password'], password ):
+            global LOGGED_USER
+            LOGGED_USER = dict_to_class(val)
             return True
         
     return False
 
-def write_users(username :str, name :str, password :str, user_type :str) -> bool:
+def write_users(uName :str, FLname :str, passw :str, utype :str) -> bool:
     """Writes user data to file
         Write user data to ./data/*.json files                 
         
@@ -160,35 +165,38 @@ def write_users(username :str, name :str, password :str, user_type :str) -> bool
         Returns False otherwise
     """
     try:
-        with open(os.path.join('data', user_type+'.json'), 'r') as f:
+        with open(os.path.join('data', utype+'.json'), 'r') as f:
             userdata = json.load(f)
     except FileNotFoundError:
         userdata = []
     
-    if check_user(username, password, user_type):
+    if check_user(uName, passw, utype):
         global ERROR
         ERROR = "Username already exists"
         return False
-    
+    user = None
+    if utype == 'members':
+        user = Member(username=uName,
+                      name=FLname,
+                      password=passw,
+                      user_type=utype,
+                      member_type='regular',
+                      finished_classes=[],
+                      upcoming_classes=[],
+                      monthly_sub_count=0,
+                      consecutive_attendance=0)
+
 
     new_id = (str(len(userdata) + 1)) 
-    new_user = { new_id : {   
-                    "username":username, 
-                    "name":name,
-                    "password":password,
-                    "type":"monthly",
-                    "schedule": []
-                    } 
-                }
+    new_user = { new_id : user.__dict__ }
     
     userdata.append(new_user)
-    with open(os.path.join('data', user_type+'.json'), 'w') as f:
+    with open(os.path.join('data', utype+'.json'), 'w') as f:
         json.dump(userdata, f, indent=4)
 
     return True
 
-
-def read_users(type :str) -> dict:  
+def read_users(type :str) -> User: 
     """Read user data
         Reads user data from ./data/*.json files                 
         
@@ -214,12 +222,44 @@ def read_users(type :str) -> dict:
 
 
     if file_data is not None:
- 
         for item in file_data:
             result_dict.update(item)
-    
+
     return result_dict
     
+
+def dict_to_class(user :dict) -> Member | Coach | Treasurer | None:
+    """Dict to User Class 
+        Converts a dictionary to user class               
+        
+        Arguments: user (dict)
+        Valid arguments: members, regulars, treasurers, coaches, groups
+        
+
+        Returns Member, Coach or Treasurer class
+        Returns None if 
+    """
+    if type(user) is not dict:
+        return None
+    
+    u_type = user["user_type"]
+
+    return_user = None
+    if u_type == "members": 
+        return_user = Member(username=user["username"],
+                        name=user["name"], 
+                        password=user["password"], 
+                        finished_classes=user["finished_classes"],
+                        upcoming_classes=user["upcoming_classes"],
+                        user_type=user["user_type"],
+                        monthly_sub_count=user["monthly_sub_count"],
+                        consecutive_attendance=user["consecutive_attendance"])    
+
+    elif u_type == "coaches":
+        return_user = None 
+
+    return return_user
+
 
 #main function
 if __name__ == "__main__":

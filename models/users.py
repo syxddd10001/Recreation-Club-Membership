@@ -1,7 +1,10 @@
 import json
 class User: 
     def __init__(self, username, name, password, user_type):
-        pass
+        self.username = username
+        self.name = name
+        self.password = password
+        self.user_type = user_type
 
 
 class Member(User):
@@ -37,6 +40,7 @@ class Member(User):
 
     def to_json(self):
         return json.dumps(self.__dict__)
+    
 
 class Coach(User):
     def __init__(self, username, name, password, finished_classes=[], upcoming_classes=[], user_type='coaches'):
@@ -47,7 +51,30 @@ class Coach(User):
     
 
 class Treasurer(User):
-    pass
+    def __init__(self, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
+        super().__init__(username, name, password, user_type)
 
 class Group:
     pass
+
+
+class Transaction:
+    def __init__(self, id, amount=0):
+        self.id = id
+        self.amount = amount
+
+class Expense(Transaction):
+    def __init__(self, id, amount, expense_type):
+        super().__init__(id, amount)
+        self.expense_type = expense_type
+
+    def increment_amount(self, inc_amount):
+        self.amount += inc_amount
+
+class Income(Transaction):
+    def __init__(self, id, amount, income_type):
+        super().__init__(id, amount)
+        self.expense_type = income_type
+
+    def increment_amount(self, inc_amount):
+        self.amount += inc_amount

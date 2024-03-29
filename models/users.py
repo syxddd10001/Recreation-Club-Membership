@@ -54,8 +54,22 @@ class Treasurer(User):
     def __init__(self, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
         super().__init__(username, name, password, user_type)
 
-class Group:
-    pass
+class Classes:
+    def __init__(self, admin, coach, date, time, members=[]):
+        self.admin = admin
+        self.coach = coach
+        self.date = date
+        self.time = time
+        self.members = members
+    
+    def add_member(self, member):
+        self.members.append(member)
+    
+    def get_members(self):
+        return self.members
+    
+    def to_json(self):
+        return json.dumps(self.__dict__)
 
 
 class Transaction:

@@ -57,7 +57,14 @@ def home():
         if LOGGED_USER:
             u_type = LOGGED_USER.__dict__['user_type']
             classes = read_users('classes')
-            all_classes = dict_to_class(classes);
+            all_classes = []
+            
+            for c in classes.values():
+                print (c)
+                all_classes.append(dict_to_class(c))
+            
+            print(all_classes)
+
             if u_type == 'members':
                 return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well
             elif u_type == 'treasurers':
@@ -284,16 +291,14 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                       finished_classes=user["finished_classes"],
                       upcoming_classes=user["upcoming_classes"])
 
-    elif u_type == None:
-        classes_objects = []
-        for class_data in user.values():
-            classes_objects.append(Classes(admin=class_data["admin"],
-                                           members=class_data["members"],
-                                           coach=class_data["coach"],
-                                           date=class_data["date"],
-                                           time=class_data["time"],
-                                           user_type=class_data["user_type"]))
-        return_user = classes_objects
+    elif u_type == "classes":    
+        return_user = Classes(admin= user["admin"],
+                              members=user["members"],
+                              coach=user["coach"],
+                              date=user["date"],
+                              time=user["time"],
+                              user_type=user["user_type"])
+        
 
 
     return return_user

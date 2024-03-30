@@ -56,9 +56,10 @@ def home():
     if(request.method == 'GET' or request.method == 'POST'):
         if LOGGED_USER:
             u_type = LOGGED_USER.__dict__['user_type']
-
+            classes = read_users('classes')
+            all_classes = dict_to_class(classes);
             if u_type == 'members':
-                return render_template('home.html', userInfo=LOGGED_USER) #return all classes as well
+                return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well
             elif u_type == 'treasurers':
                 return render_template('home_treasurers.html', userInfo=LOGGED_USER)#return all classes as well
             elif u_type == 'coaches':
@@ -261,9 +262,9 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     """
     if type(user) is not dict:
         return None
-
+    
     u_type = user.get("user_type")
-
+    
     return_user = None
     if u_type == "members": 
         return_user = Member(username=user["username"],
@@ -283,16 +284,20 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                       finished_classes=user["finished_classes"],
                       upcoming_classes=user["upcoming_classes"])
 
-    elif u_type == "classes":
-        return_user = Classes(admin=user["admin"],
-                              user_type=user["user_type"],
-                              members=user["members"],
-                              coach=user["coach"],
-                              date=user["date"],
-                              time=user["time"])
+    elif u_type == None:
+        classes_objects = []
+        for class_data in user.values():
+            classes_objects.append(Classes(admin=class_data["admin"],
+                                           members=class_data["members"],
+                                           coach=class_data["coach"],
+                                           date=class_data["date"],
+                                           time=class_data["time"],
+                                           user_type=class_data["user_type"]))
+        return_user = classes_objects
 
 
     return return_user
+
 
 #main function
 if __name__ == "__main__":

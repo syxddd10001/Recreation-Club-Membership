@@ -38,6 +38,25 @@ class Member(User):
     def increment_monthly_sub_count(self):
         self.monthly_sub_count += 1
 
+    def add_upcoming_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        self.upcoming_classes.append(class_data)
+        return True
+
+    def add_finished_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        for c in self.upcoming_classes:
+            if c == class_data:
+                self.upcoming_classes.remove(class_data)
+
+        self.finished_classes.append(class_data)
+        return True
+
+
     def to_json(self):
         return json.dumps(self.__dict__)
     
@@ -48,6 +67,27 @@ class Coach(User):
         self.finished_classes=finished_classes
         self.upcoming_classes=upcoming_classes
 
+    def add_upcoming_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        self.upcoming_classes.append(class_data)
+        return True
+
+    def add_finished_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        for c in self.upcoming_classes:
+            if c == class_data:
+                self.upcoming_classes.remove(class_data)
+
+        self.finished_classes.append(class_data)
+        return True
+
+    def to_json(self):
+        return json.dumps(self.__dict__)
+    
     
 
 class Treasurer(User):

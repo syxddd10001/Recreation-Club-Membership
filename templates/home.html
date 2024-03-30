@@ -35,17 +35,21 @@
     <div align='center'> 
         <div>
           <h1>Recreational Club Membership</h1>
-          <h2>Welcome <span>{{userInfo[0]}}</span>!</h2>
+          <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
           <h3>This is your member homepage!<h3>
 
         </div>
         
 
         <div>
-          <h2>Classes</h2>
+          <h2>Your Upcoming Classes</h2>
+          {% for class in userInfo.upcoming_classes %}
+          <p>{{class}}</p>
+          {% endfor %}
           <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
-          <button onclick="createClass()">Create a Class</button> <!-- onclick attribute -->
+          <button onclick="signUp()">Sign Up For a Class</button> <!-- onclick attribute -->
           <h2>Classes available</h2>
+          <!--{{allClasses}}-->
       </div>
 
 
@@ -67,41 +71,59 @@
    <!-- ______________________________________________________________________________________________________-->
 
         <script>
+
+    var userInfo = {
+        name: "{{ userInfo.name }}",
+        username: "{{userInfo.username}}",
+        password: "{{userInfo.password}}",
+        type: "{{userInfo.type}}",
+        user_type: "{{userInfo.user_type}}",
+        monthly_sub_count: "{{userInfo.monthly_sub_count}}",
+        consecutive_attendance: "{{userInfo.consecutive_attendance}}",
+        finished_classes: "{{userInfo.finished_classes}}",
+        upcoming_classes: "{{userInfo.upcoming_classes}}"
+    };
+
+
+
+
         var classes = []; // store created classes
 
-        function createClass() { // makes a pop up that asks you to enter the name of the class
+        function signUp() { // makes a pop up that asks you to enter the name of the class
+          // MODIFY CODE TO SELECT FROM LIST OF ALL CLASSES UPCOMING
+          //"{{allClasses}}"
 
-          var className = prompt("Enter the name of the class:");
-          if (className !== null && className !== "") {
-            document.getElementById("Content").innerText = "You have created the class: " + className;
 
-            var classTime = prompt("Please enter the Date and Time in the format: XX:XX AM/PM | XX / XX / XXXX" ); //get timing, btw need to add a cancel function
-            if (classTime !== null && classTime !== "") {
-                        classes.push({name: className, time: classTime});
-                        displayClasses();
+          // var className = prompt("Enter the name of the class:");
+          // if (className !== null && className !== "") {
+          //   document.getElementById("Content").innerText = "You have created the class: " + className;
+
+          //   var classTime = prompt("Please enter the Date and Time in the format: XX:XX AM/PM | XX / XX / XXXX" ); //get timing, btw need to add a cancel function
+          //   if (classTime !== null && classTime !== "") {
+          //               upcoming_classes.push({name: className, time: classTime});
+          //               displayClasses();
             
-            }
-        }
+           // }
+        //}
       }
 
+        
+        // function displayClasses() { //adds classes made to a list, if there are no classes it just gives an error
+        //   var classList = "";
+        //   if (upcoming_classes.length === 0) {
+        //     alert("Sorry, there are no classes! Maybe try creating one.");
+        //   }
+        //   else {
+        //     classList += "<p>Please click on the class for details:</p>";
+        //     for (var i = 0; i < classes.length; i++) {
+        //       classList += "<button onclick='showClassDetails(\"" + classes[i].name + "\", \"" + classes[i].time + "\")'>" + classes[i].name + "</button><br>";
+        //     }
+        //     document.getElementById("Content").innerHTML = classList
+        //     }
 
 
-        function displayClasses() { //adds classes made to a list, if there are no classes it just gives an error
-          var classList = "";
-          if (classes.length === 0) {
-            alert("Sorry, there are no classes! Maybe try creating one.");
-          }
-          else {
-            classList += "<p>Please click on the class for details:</p>";
-            for (var i = 0; i < classes.length; i++) {
-              classList += "<button onclick='showClassDetails(\"" + classes[i].name + "\", \"" + classes[i].time + "\")'>" + classes[i].name + "</button><br>";
-            }
-            document.getElementById("Content").innerHTML = classList
-            }
 
-
-
-          }
+         // }
           function showClassDetails(className, classTime) {
             // print class details in ClassDetails div
             document.getElementById("ClassDetails").innerHTML = "Details for class: " + className + "<br>Time: " + classTime;
@@ -109,8 +131,12 @@
 
 
             // implement js method to get the username and render it in the home page
-            fetch('/home', {
-              method: 'GET',
+        fetch('/home', {
+              method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ upcoming_classes: userInfo.upcoming_classes}),
           })
           .then(response => response.text())
           .then(username => {

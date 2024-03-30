@@ -95,11 +95,12 @@ class Treasurer(User):
         super().__init__(username, name, password, user_type)
 
 class Classes:
-    def __init__(self, admin, coach, date, time, members=[]):
+    def __init__(self, admin, coach, date, time, user_type="classes", members=[]):
         self.admin = admin
         self.coach = coach
         self.date = date
         self.time = time
+        self.user_type = user_type
         self.members = members
     
     def add_member(self, member):

@@ -72,8 +72,13 @@ def all_classes():
         return redirect('/login')
     
     if (request.method == 'GET'):
-        classes = dict_to_class('classes')
-        return jsonify({'success':'true', 'data':classes.to_json()})
+        classes = read_users('classes').values()
+        cl_list = []
+        for c in classes:
+            cl_list.append(dict_to_class(c).__dict__)
+
+        
+        return jsonify({'success':'true', 'data':cl_list})
 
 
 """Server methods"""
@@ -256,7 +261,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     """
     if type(user) is not dict:
         return None
-    
+    print(user)
     u_type = user["user_type"]
 
     return_user = None
@@ -280,9 +285,10 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
 
     elif u_type == "classes":
         return_user = Classes(admin=user["admin"],
+                              user_type=user["user_type"],
                               members=user["members"],
                               coach=user["coach"],
-                              date=user["user"],
+                              date=user["date"],
                               time=user["time"])
 
 

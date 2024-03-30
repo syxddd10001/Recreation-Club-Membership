@@ -2,6 +2,7 @@
     {
         "class1" : {
             "admin":"admin_username",
+            "user_type":"classes",
             "members": [],
             "coach":"coach1",
             "date": "03/26/2024",
@@ -12,6 +13,7 @@
     {
         "class2" : {
             "admin":"admin_username",
+            "user_type":"classes",
             "members": [],
             "coach":"coach2",
             "date": "03/29/2024",

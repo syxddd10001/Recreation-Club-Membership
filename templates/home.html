@@ -60,14 +60,15 @@
       <h2>Classes available</h2>
       <div class="classListContainer">
         <div id="Content"></div>
-          {% for class in allClasses %}
-          <p>{{class.coach}} - {{class.time}}, {{class.date}} 
-            <button class="signup" onclick="signUp('{{class}}')">Sign Up For a Class</button>
+          {% for class in allClasses %}   
+          <p>{{class.coach}} - {{class.time}}, {{class.date}}
+            <button class="signup" onclick="signUp('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Sign Up For Class</button>
           </p>
-          
           {% endfor %}
        </div>
 
+       <div id="alert">
+       </div>
 
         
         <div id="Content"> <!-- shows that we created a class, shows classes made-->
@@ -101,23 +102,16 @@
 
         var classes = []; // store created classes
 
-        function signUp(newClass) { // makes a pop up that asks you to enter the name of the class
-          // MODIFY CODE TO SELECT FROM LIST OF ALL CLASSES UPCOMING
-          //"{{allClasses}}"
-          //console.log(class.coach);
-          if (!Array.isArray(userInfo.upcomingClasses)) {
-            userInfo.upcomingClasses = []; // Initialize as an empty array
-        }
+        function signUp(coach, time, date) {
 
-          userInfo.upcomingClasses.push(newClass);
-          console.log(userInfo.upcomingClasses);
+          document.getElementById("alert").innerHTML = `You Are Now Signed Up for ${coach}'s class on ${date} at ${time}!`;;
 
         //   fetch('/newclass', {
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json',
         //     },
-        //     body: JSON.stringify(newClass),
+        //     body: JSON.stringify(coach:coach, time: time, date: date),
         // })
         // .then(response => response.text())
         // .then(responseText => {

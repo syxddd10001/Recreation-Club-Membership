@@ -43,22 +43,32 @@
         <div>
           <h2>Your Upcoming Classes</h2>
           {% for class in userInfo.upcoming_classes %}
-          <p>{{class}}</p>
+          <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
           {% endfor %}
           <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
-          <button onclick="createClass()">Create a Class</button> <!-- onclick attribute -->
-          <h2>All Classes</h2>
-          <!--{{allClasses}}-->
+
       </div>
 
 
       <!-- white rectangle container for the list of classes -->
       <div class="classListContainer">
         <div id="Content"></div>
+        <h2>All Classes</h2>
+        {% for class in allClasses %}   
+        <p>{{class.coach}} - {{class.time}}, {{class.date}}
+        </p>
+        {% endfor %}
+
        </div>
-        
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
+
+        <br>
+        <div id="classContent"> <!-- shows that we created a class, shows classes made-->
         </div>
+        <br>
+        
+       <button onclick="createClass()">Create a New Class</button> <!-- onclick attribute -->
+
+
 
         <div id="ClassDetails"> <!-- display class details as message-->
         </div>
@@ -82,19 +92,40 @@
 
         function createClass() { // makes a pop up that asks you to enter the name of the class
 
-          var className = prompt("Enter the name of the class:");
-          if (className !== null && className !== "") {
-            document.getElementById("Content").innerText = "You have created the class: " + className;
+          // var className = prompt("Enter the name of the class:");
+          // if (className !== null && className !== "") {
+            
 
-            var classTime = prompt("Please enter the Date and Time in the format: XX:XX AM/PM | XX / XX / XXXX" ); //get timing, btw need to add a cancel function
-            if (classTime !== null && classTime !== "") {
-                        classes.push({name: className, time: classTime});
-                        upcoming_classes.push({name: className, time: classTime})
-                        displayClasses();
+            var classDay = prompt("Please enter the Date in the format: XX / XX / XXXX" ); //get timing, btw need to add a cancel function
+            if (classDay !== null && classDay!== "") {
+                var classTime = prompt("Please enter the Time in the format: XX:XX AM/PM")
+                if (classTime !== null && classTime!== "") {
+                  classes.push({day: classDay, time: classTime});
+                  document.getElementById("classContent").innerText = "You have created a class on: " + classDay + " at " + classTime;
+               
+               
+               //   fetch('/createdClass', {
+              //     method: 'POST',
+              //     headers: {
+              //         'Content-Type': 'application/json',
+              //     },
+              //     body: JSON.stringify(coach:name, day: classDay, time: classTime),
+              // })
+              // .then(response => response.text())
+              // .then(responseText => {
+              //     // Handle response from the backend if needed
+              //     console.log(responseText);
+              // })
+              // .catch(error => {
+              //     console.error('Error:', error);
+              // });
+   //   }
+                }
             
             }
         }
-      }
+             
+              
 
 
 

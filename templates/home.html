@@ -20,11 +20,16 @@
       /* CSS style for the white rectangle */
       .classListContainer {
           background-color: white;
-          padding: 50px;
+          padding: 10px;
           border-radius: 10px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
           width: 30%; /* Adjust the width as needed */
+          text-align:left;
+          padding-left: 20px
 
+      }
+      .signup{
+        float: right
       }
   </style>
   </head>
@@ -44,23 +49,30 @@
         <div>
           <h2>Your Upcoming Classes</h2>
           {% for class in userInfo.upcoming_classes %}
-          <p>{{class}}</p>
+          <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
           {% endfor %}
           <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
-          <button onclick="signUp()">Sign Up For a Class</button> <!-- onclick attribute -->
-          <h2>Classes available</h2>
-          <!--{{allClasses}}-->
+           <!-- onclick attribute -->
       </div>
-
+      <br><br>
 
       <!-- white rectangle container for the list of classes -->
+      <h2>Classes available</h2>
       <div class="classListContainer">
         <div id="Content"></div>
+          {% for class in allClasses %}   
+          <p>{{class.coach}} - {{class.time}}, {{class.date}}
+            <button class="signup" onclick="signUp('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Sign Up For Class</button>
+          </p>
+          {% endfor %}
        </div>
 
+       <div id="alert">
+       </div>
 
         
         <div id="Content"> <!-- shows that we created a class, shows classes made-->
+          
         </div>
 
         <div id="ClassDetails"> <!-- display class details as message-->
@@ -76,35 +88,40 @@
         name: "{{ userInfo.name }}",
         username: "{{userInfo.username}}",
         password: "{{userInfo.password}}",
-        type: "{{userInfo.type}}",
+       type: "{{userInfo.type}}",
         user_type: "{{userInfo.user_type}}",
-        monthly_sub_count: "{{userInfo.monthly_sub_count}}",
-        consecutive_attendance: "{{userInfo.consecutive_attendance}}",
-        finished_classes: "{{userInfo.finished_classes}}",
-        upcoming_classes: "{{userInfo.upcoming_classes}}"
-    };
+       monthly_sub_count: "{{userInfo.monthly_sub_count}}",
+      consecutive_attendance: "{{userInfo.consecutive_attendance}}",
+       finished_classes: "{{userInfo.finished_classes}}",
+       upcoming_classes: "{{userInfo.upcoming_classes}}"
+   };
+
 
 
 
 
         var classes = []; // store created classes
 
-        function signUp() { // makes a pop up that asks you to enter the name of the class
-          // MODIFY CODE TO SELECT FROM LIST OF ALL CLASSES UPCOMING
-          //"{{allClasses}}"
+        function signUp(coach, time, date) {
 
+          document.getElementById("alert").innerHTML = `You Are Now Signed Up for ${coach}'s class on ${date} at ${time}!`;;
 
-          // var className = prompt("Enter the name of the class:");
-          // if (className !== null && className !== "") {
-          //   document.getElementById("Content").innerText = "You have created the class: " + className;
+        //   fetch('/newclass', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(coach:coach, time: time, date: date),
+        // })
+        // .then(response => response.text())
+        // .then(responseText => {
+        //     // Handle response from the backend if needed
+        //     console.log(responseText);
+        // })
+        // .catch(error => {
+        //     console.error('Error:', error);
+        // });
 
-          //   var classTime = prompt("Please enter the Date and Time in the format: XX:XX AM/PM | XX / XX / XXXX" ); //get timing, btw need to add a cancel function
-          //   if (classTime !== null && classTime !== "") {
-          //               upcoming_classes.push({name: className, time: classTime});
-          //               displayClasses();
-            
-           // }
-        //}
       }
 
         
@@ -136,7 +153,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ upcoming_classes: userInfo.upcoming_classes}),
+                body: JSON.stringify({ upcoming_classes: "{{userInfo.upcoming_classes}}"}),
           })
           .then(response => response.text())
           .then(username => {

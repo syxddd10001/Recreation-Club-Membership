@@ -13,7 +13,7 @@ from flask_cors import CORS
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
 sys.path.append("./models")
-from users import User, Member, Coach, Treasurer
+from users import User, Member, Coach, Treasurer, Classes
 
 ERROR = ""
 blacklist = ['--','"',"'", ';'] # list of invalid characters
@@ -66,7 +66,14 @@ def home():
         else:
             return redirect('/login')
         
-        
+@app.route('/all_classes', methods=['GET', 'POST'])
+def all_classes():
+    if not LOGGED_USER:
+        return redirect('/login')
+    
+    if (request.method == 'GET'):
+        classes = dict_to_class('classes')
+        return jsonify({'success':'true', 'data':classes.to_json()})
 
 
 """Server methods"""
@@ -155,11 +162,12 @@ def check_user(username: str, password: str, user_type: str) -> bool:
         
     return False
 
-def write_users(uName :str, FLname :str, passw :str, utype :str) -> bool:
+def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classes=[], upcoming_classes=[]) -> bool:
     """Writes user data to file
         Write user data to ./data/*.json files                 
         
         Arguments: username, password, member type (strings)
+        Optional arguments: finished_classes, upcoming_classes
 
         Returns True if the write was successful
         Returns False otherwise
@@ -186,6 +194,14 @@ def write_users(uName :str, FLname :str, passw :str, utype :str) -> bool:
                       monthly_sub_count=0,
                       consecutive_attendance=0)
 
+    if utype == 'coaches':
+        user = Coach(username=uName,
+                      name=FLname,
+                      password=passw,
+                      user_type=utype,
+                      finished_classes=[],
+                      upcoming_classes=[])
+
 
     new_id = (str(len(userdata) + 1)) 
     new_user = { new_id : user.__dict__ }
@@ -201,11 +217,11 @@ def read_users(type :str) -> User:
         Reads user data from ./data/*.json files                 
         
         Arguments: member type (string)
-        Valid arguments: members, regulars, treasurers, coaches, groups
+        Valid arguments: members, regulars, treasurers, coaches, classes
         
 
         Returns the user data if data is found
-        Returns error if not found
+        Returns an empty dictionary and prints error if not found
     """
     file_data = None
     result_dict = {}
@@ -226,14 +242,13 @@ def read_users(type :str) -> User:
             result_dict.update(item)
 
     return result_dict
-    
 
-def dict_to_class(user :dict) -> Member | Coach | Treasurer | None:
+def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     """Dict to User Class 
         Converts a dictionary to user class               
         
         Arguments: user (dict)
-        Valid arguments: members, regulars, treasurers, coaches, groups
+        Valid arguments: members, regulars, treasurers, coaches, classes
         
 
         Returns Member, Coach or Treasurer class
@@ -256,10 +271,22 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | None:
                         consecutive_attendance=user["consecutive_attendance"])    
 
     elif u_type == "coaches":
-        return_user = None 
+        return_user = Coach(username=user["username"],
+                      name=user["name"],
+                      password=user["password"],
+                      user_type=user["user_type"],
+                      finished_classes=user["finished_classes"],
+                      upcoming_classes=user["upcoming_classes"])
+
+    elif u_type == "classes":
+        return_user = Classes(admin=user["admin"],
+                              members=user["members"],
+                              coach=user["coach"],
+                              date=user["user"],
+                              time=user["time"])
+
 
     return return_user
-
 
 #main function
 if __name__ == "__main__":

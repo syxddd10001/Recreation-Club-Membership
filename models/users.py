@@ -38,6 +38,25 @@ class Member(User):
     def increment_monthly_sub_count(self):
         self.monthly_sub_count += 1
 
+    def add_upcoming_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        self.upcoming_classes.append(class_data)
+        return True
+
+    def add_finished_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        for c in self.upcoming_classes:
+            if c == class_data:
+                self.upcoming_classes.remove(class_data)
+
+        self.finished_classes.append(class_data)
+        return True
+
+
     def to_json(self):
         return json.dumps(self.__dict__)
     
@@ -48,14 +67,49 @@ class Coach(User):
         self.finished_classes=finished_classes
         self.upcoming_classes=upcoming_classes
 
+    def add_upcoming_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        self.upcoming_classes.append(class_data)
+        return True
+
+    def add_finished_class(self, class_data) -> bool:
+        if class_data is None or class_data is not isinstance(class_data, Classes):
+            return False
+        
+        for c in self.upcoming_classes:
+            if c == class_data:
+                self.upcoming_classes.remove(class_data)
+
+        self.finished_classes.append(class_data)
+        return True
+
+    def to_json(self):
+        return json.dumps(self.__dict__)
+    
     
 
 class Treasurer(User):
     def __init__(self, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
         super().__init__(username, name, password, user_type)
 
-class Group:
-    pass
+class Classes:
+    def __init__(self, admin, coach, date, time, members=[]):
+        self.admin = admin
+        self.coach = coach
+        self.date = date
+        self.time = time
+        self.members = members
+    
+    def add_member(self, member):
+        self.members.append(member)
+    
+    def get_members(self):
+        return self.members
+    
+    def to_json(self):
+        return json.dumps(self.__dict__)
 
 
 class Transaction:

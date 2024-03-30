@@ -261,8 +261,8 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     """
     if type(user) is not dict:
         return None
-    print(user)
-    u_type = user["user_type"]
+
+    u_type = user.get("user_type")
 
     return_user = None
     if u_type == "members": 

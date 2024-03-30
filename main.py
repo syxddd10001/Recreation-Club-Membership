@@ -60,10 +60,8 @@ def home():
             all_classes = []
             
             for c in classes.values():
-                print (c)
                 all_classes.append(dict_to_class(c))
             
-            print(all_classes)
 
             if u_type == 'members':
                 return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well

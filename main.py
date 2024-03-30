@@ -263,7 +263,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
         Arguments: user (dict)
         Valid arguments: members, regulars, treasurers, coaches, classes
         
-
+ 
         Returns Member, Coach or Treasurer class
         Returns None if 
     """

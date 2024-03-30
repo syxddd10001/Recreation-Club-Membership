@@ -58,11 +58,11 @@ def home():
             u_type = LOGGED_USER.__dict__['user_type']
 
             if u_type == 'members':
-                return render_template('home.html', userInfo=LOGGED_USER)
+                return render_template('home.html', userInfo=LOGGED_USER) #return all classes as well
             elif u_type == 'treasurers':
-                return render_template('home_treasurers.html', userInfo=LOGGED_USER)
+                return render_template('home_treasurers.html', userInfo=LOGGED_USER)#return all classes as well
             elif u_type == 'coaches':
-                return render_template('home_coaches.html', userInfo=LOGGED_USER)
+                return render_template('home_coaches.html', userInfo=LOGGED_USER) #return all classes as well
         else:
             return redirect('/login')
         

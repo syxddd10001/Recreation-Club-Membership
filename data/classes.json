@@ -5,7 +5,8 @@
             "members": [],
             "coach":"coach1",
             "date": "03/26/2024",
-            "time":1400
+            "time":1400,
+            "user_type": "classes"
         }
     
     },
@@ -15,7 +16,8 @@
             "members": [],
             "coach":"coach2",
             "date": "03/29/2024",
-            "time":1400
+            "time":1400,
+            "user_type": "classes"
         }
     
     } 

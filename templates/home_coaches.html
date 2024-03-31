@@ -19,13 +19,15 @@
       }
       /* CSS style for the white rectangle */
       .classListContainer {
-          background-color: white;
-          padding: 50px;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
-          width: 30%; /* Adjust the width as needed */
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
+        width: 30%; /* Adjust the width as needed */
+        text-align:left;
+        padding-left: 20px
 
-      }
+    }
   </style>
   </head>
 
@@ -51,9 +53,9 @@
 
 
       <!-- white rectangle container for the list of classes -->
+      <h2>All Classes</h2>
       <div class="classListContainer">
         <div id="Content"></div>
-        <h2>All Classes</h2>
         {% for class in allClasses %}   
         <p>{{class.coach}} - {{class.time}}, {{class.date}}
         </p>
@@ -104,25 +106,25 @@
                   document.getElementById("classContent").innerText = "You have created a class on: " + classDay + " at " + classTime;
                
                
-               //   fetch('/createdClass', {
-              //     method: 'POST',
-              //     headers: {
-              //         'Content-Type': 'application/json',
-              //     },
-              //     body: JSON.stringify(coach:name, day: classDay, time: classTime),
-              // })
-              // .then(response => response.text())
-              // .then(responseText => {
-              //     // Handle response from the backend if needed
-              //     console.log(responseText);
-              // })
-              // .catch(error => {
-              //     console.error('Error:', error);
-              // });
-   //   }
-                }
+                 fetch('/createdClass', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(coach:name, day: classDay, time: classTime),
+              })
+              .then(response => response.text())
+              .then(responseText => {
+                  // Handle response from the backend if needed
+                  console.log(responseText);
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+              });
+     }
+               }
             
-            }
+            
         }
              
               

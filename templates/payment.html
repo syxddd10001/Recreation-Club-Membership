@@ -5,7 +5,7 @@
     <title>Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
     <nav>
-      <a href="/payment">Make a Payment</a>
+      <a href="/home">HOME</a>
     </nav>
 
     <!-- ______________________________________________________________________________________________________-->
@@ -30,7 +30,52 @@
           padding-left: 20px
 
       }
-      .signup{
+      div{
+        margin: 10px;
+    }
+    
+    .main-heading{
+        text-align: center;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    input[type="password"],
+    select,textarea{
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+    }
+    
+    input[type="submit"]{
+        width: 100%;
+        background-color: rgb(13, 163, 13);
+        color: honeydew;
+        font-size: 18px;
+        padding: 12px 20px;
+        margin: 10px 0px;
+        border-radius: 7px;
+        border: none;
+        box-shadow: none;
+        cursor: pointer;
+    }
+    
+    input[type="submit"]:hover{
+        background-color: rgb(7, 231, 7);
+    }
+    
+    fieldset{
+        background-color: white;
+        border: 1px solid #cccccc;
+        margin: 10px;
+        font-size: 17px;
+    }
+
+    .payNow{
         float: right
       }
   </style>
@@ -42,44 +87,57 @@
     <div align='center'> 
         <div>
           <h1>Recreational Club Membership</h1>
-          <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
-          <h3>This is your member homepage!<h3>
+          <h3>Make a payment for <span>{{userInfo.name}}</span>:<h3>
 
         </div>
         
 
-        <div>
-          <h2>Your Upcoming Classes</h2>
-          {% for class in userInfo.upcoming_classes %}
-          <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
-          {% endfor %}
-          <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
-           <!-- onclick attribute -->
+   
+
+
+      <div class="paymentForm" id="paymentForm" >
+        <form action="" > 
+            <h2>Payment Information</h2>
+            <div>
+                Card Type: *
+                <select name="card_type" id="card_type" required>
+                    <option value="">--Select a Card Type</option> //when user first visits it will not be stored in server
+                    <option value="visa">Visa</option>
+                    <option value="rupay">Rupay</option>
+                    <option value="mastercard">MasterCard</option>
+                </select>
+            </div>
+            <div>
+                Card Number: * <input type="number" name="card_number" id="card_number"
+                    placeholder="5555-6666-7777-8888" required>
+            </div>
+            <div>
+                Expiration Date: * <input type="date" name="exp_date" id="exp_date" required>
+            </div>
+            <div>
+                CVV: * <input type="password" name="cvv" id="cvv" placeholder="123">
+            </div>
+            <input type="submit" value="Pay Now">
+        </form>
       </div>
       <br><br>
 
       <!-- white rectangle container for the list of classes -->
-      <h2>Classes available</h2>
+
       <div class="classListContainer">
+         <!--<List Unpaid Classes Here-->
+            <div>
+                <h2>Unpaid Classes</h2>
+                {% for class in userInfo.upcoming_classes %}
+                <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+                <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button>
+                {% endfor %}
+                 <!-- onclick attribute -->
+            </div>
+        <h2>Paid Classes</h2>
         <div id="Content"></div>
-          {% for class in allClasses %}   
-          <p>{{class.coach}} - {{class.time}}, {{class.date}}
-            <button class="signup" onclick="signUp('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Sign Up For Class</button>
-          </p>
-          {% endfor %}
        </div>
 
-       <div id="alert">
-       </div>
-       <button class="pay" id="pay" onclick="payClass()" hidden></button>
-
-        
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
-          
-        </div>
-
-        <div id="ClassDetails"> <!-- display class details as message-->
-        </div>
         
         
 
@@ -100,23 +158,16 @@
    };
 
 
-
-
-
-        var classes = []; // store created classes
-
-        function signUp(coach, time, date) {
-
-          document.getElementById("alert").innerHTML = `You Are Now Signed Up for ${coach}'s class on ${date} at ${time}!`;
-          document.getElementById("pay").removeAttribute("hidden");
-          document.getElementById("pay").innerHTML = "Pay for Class";
-
-        //   fetch('/newclass', {
+      function payNow(coach, time, date){
+        pay = true;
+        document.getElementById("paymentForm").removeAttribute("hidden");
+        //send class info and payment info along with user
+        //   fetch('/paidclass', {
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json',
         //     },
-        //     body: JSON.stringify(coach:coach, time: time, date: date),
+        //     body: JSON.stringify(coach:coach, time: time, date: date, name: '{{userInfo.name}}'),
         // })
         // .then(response => response.text())
         // .then(responseText => {
@@ -127,10 +178,6 @@
         //     console.error('Error:', error);
         // });
 
-      }
-
-      function payClass(){
-        window.location.href = "/payment"
       }
 
         
@@ -150,47 +197,20 @@
 
 
          // }
-          function showClassDetails(className, classTime) {
-            // print class details in ClassDetails div
-            document.getElementById("ClassDetails").innerHTML = "Details for class: " + className + "<br>Time: " + classTime;
-        }
 
 
             // implement js method to get the username and render it in the home page
-        fetch('/home', {
+        fetch('/payment', {
               method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ upcoming_classes: "{{userInfo.upcoming_classes}}"}),
-          })
-          .then(response => response.text())
-          .then(username => {
-            //const parsedData = JSON.parse(data);
-              document.getElementById("username").innerHTML = username
-              // Use the username as needed, e.g., display it in the UI
+                body: JSON.stringify({}),
           })
           .catch(error => {
               console.error('Error:', error);
           });
 
-          fetch('/all_classes', {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-          if(data.success){
-            console.log(data['data']);
-            // ??? Don't think this is doing anything?
-           // {{allClasses}} = data.data;
-          }
-
-            // Use the username as needed, e.g., display it in the UI
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-          
 
       
             

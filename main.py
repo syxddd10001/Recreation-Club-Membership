@@ -66,9 +66,9 @@ def home():
             if u_type == 'members':
                 return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well
             elif u_type == 'treasurers':
-                return render_template('home_treasurers.html', userInfo=LOGGED_USER)#return all classes as well
+                return render_template('home_treasurers.html', userInfo=LOGGED_USER, allClasses=all_classes)#return all classes as well
             elif u_type == 'coaches':
-                return render_template('home_coaches.html', userInfo=LOGGED_USER) #return all classes as well
+                return render_template('home_coaches.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well
         else:
             return redirect('/login')
         
@@ -86,6 +86,9 @@ def all_classes():
         
         return jsonify({'success':'true', 'data':cl_list})
 
+@app.route('/payment')
+def payment():
+    return render_template('payment.html', userInfo=LOGGED_USER)
 
 """Server methods"""
 

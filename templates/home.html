@@ -58,8 +58,14 @@
       </div>
       <br><br>
 
+     
+
       <!-- white rectangle container for the list of classes -->
       <h2>Classes available</h2>
+      <div id="alert">
+      </div>
+      <button class="pay" id="pay" onclick="payClass()" hidden></button>
+      <br><br>
       <div class="classListContainer">
         <div id="Content"></div>
           {% for class in allClasses %}   
@@ -69,9 +75,7 @@
           {% endfor %}
        </div>
 
-       <div id="alert">
-       </div>
-       <button class="pay" id="pay" onclick="payClass()" hidden></button>
+      
 
         
         <div id="Content"> <!-- shows that we created a class, shows classes made-->

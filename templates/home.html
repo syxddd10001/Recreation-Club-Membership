@@ -50,8 +50,8 @@
 
         <div>
           <h2>Your Upcoming Classes</h2>
-          {% for class in userInfo.upcoming_classes %}
-          <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+          {% for class in upcomingClasses %}
+            <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
           {% endfor %}
           <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
            <!-- onclick attribute -->
@@ -92,6 +92,7 @@
         <script>
 
     var userInfo = {
+        id:"{{ userInfo.id}}",
         name: "{{ userInfo.name }}",
         username: "{{userInfo.username}}",
         password: "{{userInfo.password}}",

@@ -102,8 +102,8 @@
                 Class:*
                 <select name="class" id="class" required>
                     <option value="">--Select a class</option> //when user first visits it will not be stored in server
-                    {% for class in allClasses %}
-                    <option value={{class.id}}> class id: {{class.id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
+                    {% for class in unpaidClasses %}
+                        <option value={{class.id}}> class id: {{class.id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
                     {% endfor %}
                 </select>
             </div>
@@ -138,13 +138,14 @@
          <!--<List Unpaid Classes Here-->
             <div>
                 <h2>Unpaid Classes</h2>
-                {% for class in userInfo.upcoming_classes %}
-                <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+                {% for class in unpaidClasses %}
+                <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
                <!-- <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button> -->
                 {% endfor %}
                  <!-- onclick attribute -->
             </div>
         <h2>Paid Classes</h2>
+        
         <div id="Content"></div>
        </div>
 
@@ -175,7 +176,7 @@
         console.log(class_id);
 
         //send class info and payment info along with user
-           fetch('/paidclass', {
+           fetch('/payclass', {
              method: 'POST',
              headers: {
                  'Content-Type': 'application/json',

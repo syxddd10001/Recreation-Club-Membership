@@ -62,13 +62,16 @@ def home():
             ALL_CLASSES = []
 
             for c in classes.values():
-                ALL_CLASSES.append(dict_to_class(c))
-            
+                ALL_CLASSES.append(dict_to_class(c))           
 
             if u_type == 'members':
-                return render_template('home.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES) #return all classes as well
+                upcoming_classes = classes_signed_up_for(LOGGED_USER.upcoming_classes)
+                all_classes=set(ALL_CLASSES)-set(upcoming_classes)
+                return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes, upcomingClasses=upcoming_classes) #return all classes as well
+            
             elif u_type == 'treasurers':
                 return render_template('home_treasurers.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES)#return all classes as well
+            
             elif u_type == 'coaches':
                 return render_template('home_coaches.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES) #return all classes as well
         else:
@@ -93,15 +96,23 @@ def payment():
     if LOGGED_USER is None:
         return redirect('login')
 
-    return render_template('payment.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES)
+    common_classes = classes_signed_up_for(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes)
+    unpaid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "unpaid"))
 
-@app.route('/paidclass', methods=['GET', 'POST'])
+    paid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "paid"))
+
+
+    return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
+
+@app.route('/payclass', methods=['GET', 'POST'])
 def payclass():
     if not LOGGED_USER:
         return redirect('login')
 
     if request.method == 'POST':
+        print("running ")
         if pay_class_server():
+            print("successfully paid")
             jsonify({'success':'true'})
 
 
@@ -212,8 +223,10 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
         ERROR = "Username already exists"
         return False
     user = None
+    new_id = (str(len(userdata) + 1)) 
     if utype == 'members':
-        user = Member(username=uName,
+        user = Member(id=new_id,
+                      username=uName,
                       name=FLname,
                       password=passw,
                       user_type=utype,
@@ -224,7 +237,8 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                       consecutive_attendance=0)
 
     if utype == 'coaches':
-        user = Coach(username=uName,
+        user = Coach(id=new_id,
+                      username=uName,
                       name=FLname,
                       password=passw,
                       user_type=utype,
@@ -232,13 +246,50 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                       upcoming_classes=[])
 
 
-    new_id = (str(len(userdata) + 1)) 
+    
     new_user = { new_id : user.__dict__ }
     
     userdata.append(new_user)
     with open(os.path.join('data', utype+'.json'), 'w') as f:
         json.dump(userdata, f, indent=4)
 
+    return True
+
+def write_classes(admin, members, coach, date, time, utype='classes'):
+    """Writes object data to file
+        Write object data to ./data/*.json files                 
+        
+        Arguments: id, admin, members, coachm date, time, utype (strings)
+        Optional arguments: finished_classes, upcoming_classes
+
+        Returns True if the write was successful
+        Returns False otherwise
+    """
+    try:
+        with open(os.path.join('data', utype+'.json'), 'r') as f:
+            userdata = json.load(f)
+    
+    except FileNotFoundError:
+        userdata = []
+    obj = None
+    new_id = (str(len(userdata) + 1)) 
+    if utype == 'classes':
+        obj = Classes(id=new_id,
+                    admin=admin,
+                    members=members,
+                    coach=coach,
+                    date=date,
+                    time=time,
+                    user_type=utype)
+         
+
+    
+    new_obj = { new_id : obj.__dict__ }
+    userdata.append(new_obj)
+    
+    with open(os.path.join('data', utype+'.json'), 'w') as f:
+        json.dump(userdata, f, indent=4)
+    
     return True
 
 def read_users(type :str) -> User: 
@@ -290,7 +341,8 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     
     return_user = None
     if u_type == "members": 
-        return_user = Member(username=user["username"],
+        return_user = Member(id="member_id",
+                        username=user["username"],
                         name=user["name"], 
                         password=user["password"], 
                         finished_classes=user["finished_classes"],
@@ -301,7 +353,8 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                         consecutive_attendance=user["consecutive_attendance"])    
 
     elif u_type == "coaches":
-        return_user = Coach(username=user["username"],
+        return_user = Coach(id=user["coach_id"],
+                      username=user["username"],
                       name=user["name"],
                       password=user["password"],
                       user_type=user["user_type"],
@@ -321,31 +374,97 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
 
     return return_user
 
-def update_json_file(file: str, update_id, update_field, update_value):
+def update_json_file(file: str, update_id :any, update_field :any, update_value: any):
+    """update_json_file method
+        Updates json fields with the values provided
+        
+        Arguments: update_id, update_field, update_value (str)
+        
+        Returns True if update was successful
+        Returns False otherwise
+    """
+
     file_path = os.path.join("data", file+'.json')
+
+    success = False
+
     with open(file_path, "r") as jsonFile:
         data = json.load(jsonFile)
+
     
     for item in data:
         if (item.get(update_id)):
             item[update_id][update_field]=update_value
+            success = True
             break
     
+    
+    if not success:
+        return False
+    
+    
+
     with open(file_path, "w") as jsonFile:
         json.dump(data, jsonFile, indent=4)
     
+    return True
 
+def find_in_dict(local_list, field, parameter):
+    found = []
+    for class_dict in local_list:
+        if str(class_dict[field]) == str(parameter):  
+            found.append(class_dict) 
+    
+    return found
 
 def pay_class_server():
     class_id = request.json.get('class_id')
     all_local_classes = LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes
-    #all_local_classes = list of dictionaries ie [{LOCAL_CLASS DATA TYPE}] 
-    
-    payment_for = next(c for c in all_local_classes if c["class_id"] == class_id)
-          
+
+    payment_for = find_in_dict(all_local_classes, "class_id", class_id)
+
+    new_list = []
+
+    for cl in LOGGED_USER.upcoming_classes:
+        if cl == payment_for[0]:
+ 
+            new_obj = {'class_id':payment_for[0]['class_id'], "payment_status":"paid"}
+            new_list.append(new_obj)
+            continue
+        
+        new_list.append(cl)
+
+    if new_list != LOGGED_USER.upcoming_classes:
+
+        update_json_file('members', str(LOGGED_USER.id), 'upcoming_classes', new_list)
+        return True
+
+    new_list = []
+    for cl in LOGGED_USER.finished_classes:
+        if cl == payment_for[0]:
+            new_obj = {'class_id':payment_for[0]['class_id'], "payment_status":"paid"}
+            new_list.append(new_obj)
+            continue
+        
+        new_list.append(cl)
+
+    if set(new_list) != set(LOGGED_USER.finished_classes):
+        update_json_file('members', LOGGED_USER.id, 'finished_classes', new_list)
+        return True
         
     return False
+        
+
+def classes_signed_up_for(target_list):
+    common_classes = []
+    for class_in_all, class_in_target in zip(ALL_CLASSES, target_list):
+        if str(class_in_all.id) == str(class_in_target['class_id']):
+            common_classes.append(class_in_all)
+    
+    return common_classes
 
 #main function
 if __name__ == "__main__":
+
+    
     app.run(debug=True)

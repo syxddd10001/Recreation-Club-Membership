@@ -39,14 +39,15 @@ class Member(User):
         self.monthly_sub_count += 1
 
     def add_upcoming_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Classes):
+        if class_data is None or class_data is not isinstance(class_data, Local_Classes):
+            print("Data is not of type Local_Classes")
             return False
         
         self.upcoming_classes.append(class_data)
         return True
 
     def add_finished_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Classes):
+        if class_data is None or class_data is not isinstance(class_data, Local_Classes):
             return False
         
         for c in self.upcoming_classes:
@@ -95,7 +96,8 @@ class Treasurer(User):
         super().__init__(username, name, password, user_type)
 
 class Classes:
-    def __init__(self, admin, coach, date, time, members=[], user_type="classes"):
+    def __init__(self, id, admin, coach, date, time, members=[], user_type="classes"):
+        self.id = id
         self.admin = admin
         self.coach = coach
         self.date = date
@@ -113,6 +115,11 @@ class Classes:
     def to_json(self):
         return json.dumps(self.__dict__)
 
+class Local_Classes(Classes):
+    def __init__(self, id, admin, coach, date, time, payment_status, members=[], user_type="classes"):
+        super.__init__(self, id, admin, coach, date, time, members=[], user_type="classes")
+        self.payment_status = payment_status
+        
 
 class Transaction:
     def __init__(self, id, amount=0):

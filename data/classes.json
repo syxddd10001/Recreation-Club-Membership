@@ -1,6 +1,7 @@
 [
     {
-        "class1" : {
+        "1" : {
+            "class_id": 1,
             "admin":"admin_username",
             "user_type":"classes",
             "members": [],
@@ -12,7 +13,8 @@
     
     },
     {
-        "class2" : {
+        "2" : {
+            "class_id": 2,
             "admin":"admin_username",
             "user_type":"classes",
             "members": [],

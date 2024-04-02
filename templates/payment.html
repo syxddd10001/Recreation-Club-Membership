@@ -96,8 +96,18 @@
 
 
       <div class="paymentForm" id="paymentForm" >
-        <form action="" > 
+        <form action="" method="POST"> 
             <h2>Payment Information</h2>
+            <div>
+                Class:*
+                <select name="class" id="class" required>
+                    <option value="">--Select a class</option> //when user first visits it will not be stored in server
+                    {% for class in allClasses %}
+                    <option value={{class.id}}> class id: {{class.id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
             <div>
                 Card Type: *
                 <select name="card_type" id="card_type" required>
@@ -117,7 +127,7 @@
             <div>
                 CVV: * <input type="password" name="cvv" id="cvv" placeholder="123">
             </div>
-            <input type="submit" value="Pay Now">
+            <input onclick="payNow()" type="submit" value="Pay Now">
         </form>
       </div>
       <br><br>
@@ -130,7 +140,7 @@
                 <h2>Unpaid Classes</h2>
                 {% for class in userInfo.upcoming_classes %}
                 <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
-                <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button>
+               <!-- <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button> -->
                 {% endfor %}
                  <!-- onclick attribute -->
             </div>
@@ -158,25 +168,28 @@
    };
 
 
-      function payNow(coach, time, date){
+      function payNow(){
         pay = true;
         document.getElementById("paymentForm").removeAttribute("hidden");
+        let class_id = document.getElementById("class").value;
+        console.log(class_id);
+
         //send class info and payment info along with user
-        //   fetch('/paidclass', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(coach:coach, time: time, date: date, name: '{{userInfo.name}}'),
-        // })
-        // .then(response => response.text())
-        // .then(responseText => {
-        //     // Handle response from the backend if needed
-        //     console.log(responseText);
-        // })
-        // .catch(error => {
-        //     console.error('Error:', error);
-        // });
+           fetch('/paidclass', {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({class_id: class_id}),
+         })
+         .then(response => response.text())
+         .then(responseText => {
+             // Handle response from the backend if needed
+             console.log(responseText);
+         })
+         .catch(error => {
+             console.error('Error:', error);
+         });
 
       }
 
@@ -200,16 +213,6 @@
 
 
             // implement js method to get the username and render it in the home page
-        fetch('/payment', {
-              method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({}),
-          })
-          .catch(error => {
-              console.error('Error:', error);
-          });
 
 
       

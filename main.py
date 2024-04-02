@@ -18,6 +18,7 @@ from users import User, Member, Coach, Treasurer, Classes
 ERROR = ""
 blacklist = ['--','"',"'", ';'] # list of invalid characters
 LOGGED_USER = None
+ALL_CLASSES = []
 
 app = Flask(__name__)
 CORS(app)
@@ -57,18 +58,19 @@ def home():
         if LOGGED_USER:
             u_type = LOGGED_USER.__dict__['user_type']
             classes = read_users('classes')
-            all_classes = []
-            
+            global ALL_CLASSES
+            ALL_CLASSES = []
+
             for c in classes.values():
-                all_classes.append(dict_to_class(c))
+                ALL_CLASSES.append(dict_to_class(c))
             
 
             if u_type == 'members':
-                return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well
+                return render_template('home.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES) #return all classes as well
             elif u_type == 'treasurers':
-                return render_template('home_treasurers.html', userInfo=LOGGED_USER, allClasses=all_classes)#return all classes as well
+                return render_template('home_treasurers.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES)#return all classes as well
             elif u_type == 'coaches':
-                return render_template('home_coaches.html', userInfo=LOGGED_USER, allClasses=all_classes) #return all classes as well
+                return render_template('home_coaches.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES) #return all classes as well
         else:
             return redirect('/login')
         
@@ -86,9 +88,22 @@ def all_classes():
         
         return jsonify({'success':'true', 'data':cl_list})
 
-@app.route('/payment')
+@app.route('/payment', methods=['GET', 'POST'])
 def payment():
-    return render_template('payment.html', userInfo=LOGGED_USER)
+    if LOGGED_USER is None:
+        return redirect('login')
+
+    return render_template('payment.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES)
+
+@app.route('/paidclass', methods=['GET', 'POST'])
+def payclass():
+    if not LOGGED_USER:
+        return redirect('login')
+
+    if request.method == 'POST':
+        if pay_class_server():
+            jsonify({'success':'true'})
+
 
 """Server methods"""
 
@@ -280,6 +295,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                         password=user["password"], 
                         finished_classes=user["finished_classes"],
                         upcoming_classes=user["upcoming_classes"],
+                        member_type=user["member_type"],
                         user_type=user["user_type"],
                         monthly_sub_count=user["monthly_sub_count"],
                         consecutive_attendance=user["consecutive_attendance"])    
@@ -293,7 +309,8 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                       upcoming_classes=user["upcoming_classes"])
 
     elif u_type == "classes":    
-        return_user = Classes(admin= user["admin"],
+        return_user = Classes(id=user["class_id"],
+                              admin=user["admin"],
                               members=user["members"],
                               coach=user["coach"],
                               date=user["date"],
@@ -304,6 +321,30 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
 
     return return_user
 
+def update_json_file(file: str, update_id, update_field, update_value):
+    file_path = os.path.join("data", file+'.json')
+    with open(file_path, "r") as jsonFile:
+        data = json.load(jsonFile)
+    
+    for item in data:
+        if (item.get(update_id)):
+            item[update_id][update_field]=update_value
+            break
+    
+    with open(file_path, "w") as jsonFile:
+        json.dump(data, jsonFile, indent=4)
+    
+
+
+def pay_class_server():
+    class_id = request.json.get('class_id')
+    all_local_classes = LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes
+    #all_local_classes = list of dictionaries ie [{LOCAL_CLASS DATA TYPE}] 
+    
+    payment_for = next(c for c in all_local_classes if c["class_id"] == class_id)
+          
+        
+    return False
 
 #main function
 if __name__ == "__main__":

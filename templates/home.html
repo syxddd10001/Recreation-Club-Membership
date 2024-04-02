@@ -70,7 +70,7 @@
         <div id="Content"></div>
           {% for class in allClasses %}   
           <p>{{class.coach}} - {{class.time}}, {{class.date}}
-            <button class="signup" onclick="signUp('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Sign Up For Class</button>
+            <button class="signup" onclick="signUp('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')">Sign Up For Class</button>
           </p>
           {% endfor %}
        </div>
@@ -110,27 +110,29 @@
 
         var classes = []; // store created classes
 
-        function signUp(coach, time, date) {
+        function signUp(class_id, coach, date, time) {
 
           document.getElementById("alert").innerHTML = `You Are Now Signed Up for ${coach}'s class on ${date} at ${time}!`;
           document.getElementById("pay").removeAttribute("hidden");
           document.getElementById("pay").innerHTML = "Pay for Class";
-
-        //   fetch('/newclass', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(coach:coach, time: time, date: date),
-        // })
-        // .then(response => response.text())
-        // .then(responseText => {
-        //     // Handle response from the backend if needed
-        //     console.log(responseText);
-        // })
-        // .catch(error => {
-        //     console.error('Error:', error);
-        // });
+          console.log(class_id);
+           fetch('/signupclass', {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({class_id:class_id}),
+         })
+         .then(response => response.text())
+         .then(responseText => {
+             // Handle response from the backend if needed
+             console.log(responseText);
+             alert("SUCCESSFULLY SIGNED UP");
+             window.location.href = "/home";
+         })
+         .catch(error => {
+             console.error('Error:', error);
+         });
 
       }
 

@@ -54,6 +54,9 @@ def signup():
 def home():
     if not LOGGED_USER:
         return redirect('/login')
+    
+    update_user_data('members')
+    
     if(request.method == 'GET' or request.method == 'POST'):
         if LOGGED_USER:
             u_type = LOGGED_USER.__dict__['user_type']
@@ -98,9 +101,7 @@ def payment():
 
     common_classes = classes_signed_up_for(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes)
     unpaid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "unpaid"))
-
     paid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "paid"))
-
 
     return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
 
@@ -113,8 +114,9 @@ def payclass():
         print("running ")
         if pay_class_server():
             print("successfully paid")
-            jsonify({'success':'true'})
-
+            jsonify({'success':'true', 'message':'Payment was successful!'})
+        else:
+            jsonify({'error':'true', 'message':'Payment unsuccessful'})
 
 """Server methods"""
 
@@ -197,6 +199,28 @@ def check_user(username: str, password: str, user_type: str) -> bool:
     for val in userdata.values():
         if val['username'] == username and check_password_hash( val['password'], password ):
             global LOGGED_USER
+            LOGGED_USER = dict_to_class(val)
+            return True
+        
+    return False
+
+def update_user_data(user_type):
+    """Update user data method
+        Updates user data by rereading it               
+        
+        Arguments: user_type (string)
+
+        Returns True if the update was successful
+        Returns False otherwise
+    """ 
+    global LOGGED_USER
+    userdata = read_users(user_type)
+    if not LOGGED_USER:
+        return False
+    
+    for val in userdata.values():
+        if val['username'] == LOGGED_USER.username:
+            
             LOGGED_USER = dict_to_class(val)
             return True
         
@@ -341,7 +365,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     
     return_user = None
     if u_type == "members": 
-        return_user = Member(id="member_id",
+        return_user = Member(id=user["member_id"],
                         username=user["username"],
                         name=user["name"], 
                         password=user["password"], 
@@ -383,17 +407,16 @@ def update_json_file(file: str, update_id :any, update_field :any, update_value:
         Returns True if update was successful
         Returns False otherwise
     """
-
+    
     file_path = os.path.join("data", file+'.json')
-
     success = False
 
     with open(file_path, "r") as jsonFile:
-        data = json.load(jsonFile)
-
+        data = json.load(jsonFile)   
     
     for item in data:
         if (item.get(update_id)):
+
             item[update_id][update_field]=update_value
             success = True
             break
@@ -409,7 +432,14 @@ def update_json_file(file: str, update_id :any, update_field :any, update_value:
     
     return True
 
-def find_in_dict(local_list, field, parameter):
+def find_in_dict(local_list, field, parameter) -> list:
+    """Find in dict method
+        Searches the local_list (list of dictionaries) and finds the values of field that match the paramter 
+        
+        Arguments: local_list (list of dictionaries), field (string), parameter (string)
+
+        Returns the list of found items
+    """    
     found = []
     for class_dict in local_list:
         if str(class_dict[field]) == str(parameter):  
@@ -418,26 +448,32 @@ def find_in_dict(local_list, field, parameter):
     return found
 
 def pay_class_server():
+    """Pay for class method
+        Finds the class being paid for and then updates paid status for that class for member
+
+        Arguments: None
+
+        Returns True if payment was successful
+        Returns False otherwise
+    """
+    
     class_id = request.json.get('class_id')
     all_local_classes = LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes
 
     payment_for = find_in_dict(all_local_classes, "class_id", class_id)
 
     new_list = []
-
+    
     for cl in LOGGED_USER.upcoming_classes:
         if cl == payment_for[0]:
- 
             new_obj = {'class_id':payment_for[0]['class_id'], "payment_status":"paid"}
             new_list.append(new_obj)
-            continue
-        
+            continue 
         new_list.append(cl)
 
+    print("LOGGED_USER ID: " + str(LOGGED_USER.id))
     if new_list != LOGGED_USER.upcoming_classes:
-
-        update_json_file('members', str(LOGGED_USER.id), 'upcoming_classes', new_list)
-        return True
+        return(update_json_file('members', LOGGED_USER.id, 'upcoming_classes', new_list))
 
     new_list = []
     for cl in LOGGED_USER.finished_classes:
@@ -449,22 +485,29 @@ def pay_class_server():
         new_list.append(cl)
 
     if set(new_list) != set(LOGGED_USER.finished_classes):
-        update_json_file('members', LOGGED_USER.id, 'finished_classes', new_list)
-        return True
+        return(update_json_file('members', LOGGED_USER.id, 'finished_classes', new_list))
+
         
     return False
         
 
 def classes_signed_up_for(target_list):
+    """Classes signed up for method
+        Finds the intersection of classes between the target list and the all the classes in the database
+        
+        Arguments: target_list (list of class references)
+
+        Returns the list of common classes as a list of Classes objects 
+    """ # target list would be for example -- { 'class_id':'1', 'payment':'unpaid'} ie its a reference not an class data
     common_classes = []
-    for class_in_all, class_in_target in zip(ALL_CLASSES, target_list):
-        if str(class_in_all.id) == str(class_in_target['class_id']):
-            common_classes.append(class_in_all)
+    for class_in_all in ALL_CLASSES:
+        print(class_in_all.__dict__)
+        for class_in_target in target_list:
+            if str(class_in_all.id) == str(class_in_target['class_id']):
+                common_classes.append(class_in_all)
     
-    return common_classes
+    return common_classes # common_classes would be [{CLASSES Data type 1} ... {CLASSES Data type n}]
 
 #main function
 if __name__ == "__main__":
-
-    
     app.run(debug=True)

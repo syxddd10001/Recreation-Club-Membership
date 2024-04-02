@@ -139,7 +139,7 @@
             <div>
                 <h2>Unpaid Classes</h2>
                 {% for class in unpaidClasses %}
-                <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
+                    <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
                <!-- <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button> -->
                 {% endfor %}
                  <!-- onclick attribute -->
@@ -183,10 +183,15 @@
              },
              body: JSON.stringify({class_id: class_id}),
          })
-         .then(response => response.text())
-         .then(responseText => {
+         .then(response => response.json())
+         .then(response => {
              // Handle response from the backend if needed
-             console.log(responseText);
+             console.log(response);
+            if (response.success) {
+                alert(response.message);  // this isnt working for some reason
+                window.location.href = "/home"; // make it so that it alerts the user the payment was successful 
+                                                // then redirects back to home
+            }
          })
          .catch(error => {
              console.error('Error:', error);

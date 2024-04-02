@@ -40,15 +40,15 @@ class Member(User):
         self.monthly_sub_count += 1
 
     def add_upcoming_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Local_Classes):
-            print("Data is not of type Local_Classes")
+        if class_data is None:
+            print("Data is not of type dict")
             return False
         
         self.upcoming_classes.append(class_data)
         return True
 
     def add_finished_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Local_Classes):
+        if class_data is None:
             return False
         
         for c in self.upcoming_classes:

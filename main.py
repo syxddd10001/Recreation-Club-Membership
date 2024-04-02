@@ -100,12 +100,13 @@ def payment():
         return redirect('login')
     
     update_user_data('members')
-    
-    common_classes = classes_signed_up_for(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes)
-    unpaid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "unpaid"))
-    paid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "paid"))
+    if LOGGED_USER.member_type == 'regular':
+        common_classes = classes_signed_up_for(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes)
+        unpaid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "unpaid"))
+        paid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "paid"))
 
-    return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
+        return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
+ 
 
 @app.route('/payclass', methods=['GET', 'POST'])
 def payclass():
@@ -116,9 +117,21 @@ def payclass():
         print("running ")
         if pay_class_server():
             print("successfully paid")
-            jsonify({'success':'true', 'message':'Payment was successful!'})
+            return jsonify({'success':'true', 'message':'Payment was successful!'})
         else:
-            jsonify({'error':'true', 'message':'Payment unsuccessful'})
+            return jsonify({'error':'true', 'message':'Payment unsuccessful'})
+
+@app.route('/signupclass', methods=['GET', 'POST'])
+def signupclass():
+    if not LOGGED_USER:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        print('ROSSSS')
+        if signup_class_server():
+            return jsonify({'success':'true'})
+        else:
+            return jsonify({'error':'true'})
 
 """Server methods"""
 
@@ -423,11 +436,8 @@ def update_json_file(file: str, update_id :any, update_field :any, update_value:
             success = True
             break
     
-    
     if not success:
-        return False
-    
-    
+        return False   
 
     with open(file_path, "w") as jsonFile:
         json.dump(data, jsonFile, indent=4)
@@ -473,7 +483,6 @@ def pay_class_server():
             continue 
         new_list.append(cl)
 
-    print("LOGGED_USER ID: " + str(LOGGED_USER.id))
     if new_list != LOGGED_USER.upcoming_classes:
         return(update_json_file('members', LOGGED_USER.id, 'upcoming_classes', new_list))
 
@@ -503,12 +512,36 @@ def classes_signed_up_for(target_list):
     """ # target list would be for example -- { 'class_id':'1', 'payment':'unpaid'} ie its a reference not an class data
     common_classes = []
     for class_in_all in ALL_CLASSES:
-        print(class_in_all.__dict__)
+
         for class_in_target in target_list:
             if str(class_in_all.id) == str(class_in_target['class_id']):
                 common_classes.append(class_in_all)
     
     return common_classes # common_classes would be [{CLASSES Data type 1} ... {CLASSES Data type n}]
+
+def signup_class_server():
+    class_id = request.json.get('class_id')
+
+    LOGGED_USER.add_upcoming_class({"class_id":class_id, "payment_status":"unpaid"})
+
+    update_json_file('members', LOGGED_USER.id, "upcoming_classes", LOGGED_USER.upcoming_classes)
+
+    for cl in ALL_CLASSES:
+        if class_id == cl.id:
+            cl.add_member({"member_id":LOGGED_USER.id, "username":LOGGED_USER.username, "name":LOGGED_USER.name})
+
+            update_json_file('classes', cl.id, "members", list(set(cl.members)))
+            return True
+        
+    return False
+
+def finish_class_server():
+    class_id = request.json.get('class_id')
+
+    LOGGED_USER.add_finished_class({"class_id":class_id, "payment_status":"paid"})
+
+    return update_json_file('members', LOGGED_USER.id, "finished_classes", LOGGED_USER.finished_classes)
+
 
 #main function
 if __name__ == "__main__":

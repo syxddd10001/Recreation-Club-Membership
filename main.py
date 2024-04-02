@@ -116,9 +116,9 @@ def payclass():
         print("running ")
         if pay_class_server():
             print("successfully paid")
-            jsonify({'success':'true', 'message':'Payment was successful!'})
+            return jsonify({'success':'true', 'message':'Payment was successful!'})
         else:
-            jsonify({'error':'true', 'message':'Payment unsuccessful'})
+           return jsonify({'error':'true', 'message':'Payment unsuccessful'})
 
 """Server methods"""
 

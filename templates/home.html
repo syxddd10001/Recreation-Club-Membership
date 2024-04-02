@@ -116,21 +116,21 @@
           document.getElementById("pay").removeAttribute("hidden");
           document.getElementById("pay").innerHTML = "Pay for Class";
 
-        //   fetch('/newclass', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(coach:coach, time: time, date: date),
-        // })
-        // .then(response => response.text())
-        // .then(responseText => {
-        //     // Handle response from the backend if needed
-        //     console.log(responseText);
-        // })
-        // .catch(error => {
-        //     console.error('Error:', error);
-        // });
+          fetch('/newclass', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(coach:coach, time: time, date: date),
+        })
+        .then(response => response.text())
+        .then(responseText => {
+            // Handle response from the backend if needed
+            console.log(responseText);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 
       }
 

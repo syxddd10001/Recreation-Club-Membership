@@ -111,7 +111,7 @@
                   headers: {
                       'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify(coach:name, day: classDay, time: classTime),
+                  body: JSON.stringify(coach:userInfo.name, day: classDay, time: classTime),
               })
               .then(response => response.text())
               .then(responseText => {

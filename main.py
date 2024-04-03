@@ -100,12 +100,12 @@ def payment():
         return redirect('login')
     
     update_user_data('members')
-    if LOGGED_USER.member_type == 'regular':
-        common_classes = classes_signed_up_for(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes)
-        unpaid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "unpaid"))
-        paid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "paid"))
+    
+    common_classes = classes_signed_up_for(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes)
+    unpaid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "unpaid"))
+    paid_classes = classes_signed_up_for(find_in_dict(LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes, "payment_status", "paid"))
 
-        return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
+    return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
  
 
 @app.route('/payclass', methods=['GET', 'POST'])
@@ -530,7 +530,7 @@ def signup_class_server():
         if class_id == cl.id:
             cl.add_member({"member_id":LOGGED_USER.id, "username":LOGGED_USER.username, "name":LOGGED_USER.name})
 
-            update_json_file('classes', cl.id, "members", list(set(cl.members)))
+            update_json_file('classes', cl.id, "members", cl.members)
             return True
         
     return False

@@ -24,10 +24,10 @@ class Member(User):
     def get_classes(self):
         past = self.finished_classes
         future = self.upcoming_classes
-        return past.append(future)
+        return past.extend(future)
 
     def change_member_type(self, update_type):
-        if update_type != 'regular' or update_type != 'monthly':
+        if update_type != 'regular' and update_type != 'monthly':
             return False
         
         self.member_type=update_type
@@ -70,14 +70,14 @@ class Coach(User):
         self.upcoming_classes=upcoming_classes
 
     def add_upcoming_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Classes):
+        if class_data is None or not isinstance(class_data, Classes):
             return False
         
         self.upcoming_classes.append(class_data)
         return True
 
     def add_finished_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Classes):
+        if class_data is None or not isinstance(class_data, Classes):
             return False
         
         for c in self.upcoming_classes:
@@ -105,7 +105,6 @@ class Classes:
         self.time = time
         self.user_type = user_type
         self.members = members
-        self.user_type = user_type
     
     def add_member(self, member):
         self.members.append(member)

@@ -190,6 +190,7 @@ def signup_server() -> bool:
 
 
     if user == "" or password == "" or name == "":
+        ERROR = "Name, username or password cannot be empty"
         return False
 
     for char in blacklist:
@@ -212,7 +213,7 @@ def check_user(username: str, password: str, user_type: str) -> bool:
     """
     userdata = read_users(user_type)
     for val in userdata.values():
-        if val['username'] == username and check_password_hash( val['password'], password ):
+        if val['username'] == username and check_password_hash( val['password'], generate_password_hash(password, method='scrypt') ):
             global LOGGED_USER
             LOGGED_USER = dict_to_class(val)
             return True
@@ -344,7 +345,7 @@ def read_users(type :str) -> User:
     """
     file_data = None
     result_dict = {}
-    json_files = [f for f in os.listdir("data") if f.endswith('.json')]
+    #json_files = [f for f in os.listdir("data") if f.endswith('.json')]
 
 
     file_path = os.path.join("data", type+'.json')
@@ -354,6 +355,7 @@ def read_users(type :str) -> User:
 
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"No such file: {0}.json".format(type))
+        return result_dict
 
 
     if file_data is not None:

@@ -1,0 +1,15 @@
+There are many current bugs in the application.
+Here is a list of current KNOWN bugs. 
+
+** Currently treasures aren't handled at ALL! ***
+1. Treasures not added to work server side (can't sign up)
+2. Inefficiences in all code (small things)
+3. Sign up page redirect to home page not working (redirects to login)
+4. Logins not working at all
+    -> Could be password hashing issue
+** Currently can't test/fix home as login page failed
+5. Better error handling (lot of it ignored, not well used or outright missing)
+
+
+Fixed bugs:
+(Fixed bugs described here as a bugfix may be wrongly fixed or cause another bug)

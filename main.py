@@ -265,7 +265,7 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
     user = None
     new_id = (str(len(userdata) + 1)) 
     if utype == 'members':
-        user = Member(id=new_id,
+        user = Member(member_id=new_id,
                       username=uName,
                       name=FLname,
                       password=passw,
@@ -277,7 +277,7 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                       consecutive_attendance=0)
 
     if utype == 'coaches':
-        user = Coach(id=new_id,
+        user = Coach(coach_id=new_id,
                       username=uName,
                       name=FLname,
                       password=passw,

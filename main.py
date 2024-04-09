@@ -265,7 +265,7 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
     user = None
     new_id = (str(len(userdata) + 1)) 
     if utype == 'members':
-        user = Member(member_id=new_id,
+        user = Member(id=new_id,
                       username=uName,
                       name=FLname,
                       password=passw,
@@ -277,7 +277,7 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                       consecutive_attendance=0)
 
     if utype == 'coaches':
-        user = Coach(coach_id=new_id,
+        user = Coach(id=new_id,
                       username=uName,
                       name=FLname,
                       password=passw,
@@ -382,7 +382,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     
     return_user = None
     if u_type == "members": 
-        return_user = Member(id=user["member_id"],
+        return_user = Member(id=user["id"],
                         username=user["username"],
                         name=user["name"], 
                         password=user["password"], 
@@ -394,7 +394,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                         consecutive_attendance=user["consecutive_attendance"])    
 
     elif u_type == "coaches":
-        return_user = Coach(id=user["coach_id"],
+        return_user = Coach(id=user["id"],
                       username=user["username"],
                       name=user["name"],
                       password=user["password"],
@@ -403,7 +403,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                       upcoming_classes=user["upcoming_classes"])
 
     elif u_type == "classes":    
-        return_user = Classes(id=user["class_id"],
+        return_user = Classes(id=user["id"],
                               admin=user["admin"],
                               members=user["members"],
                               coach=user["coach"],
@@ -471,7 +471,7 @@ def pay_class_server():
         Returns False otherwise
     """
     
-    class_id = request.json.get('class_id')
+    class_id = request.json.get('class_id') # Remove class_?
     all_local_classes = LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes
 
     payment_for = find_in_dict(all_local_classes, "class_id", class_id)

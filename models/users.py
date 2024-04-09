@@ -61,8 +61,8 @@ class Member(User):
     
 
 class Coach(User):
-    def __init__(self, username, name, password, finished_classes=None, upcoming_classes=None, user_type='coaches'):
-        super().__init__(username, name, password, user_type)
+    def __init__(self, id, username, name, password, finished_classes=None, upcoming_classes=None, user_type='coaches'):
+        super().__init__(id, username, name, password, user_type)
         self.finished_classes=finished_classes or []
         self.upcoming_classes=upcoming_classes or []
 
@@ -89,8 +89,8 @@ class Coach(User):
     
 
 class Treasurer(User):
-    def __init__(self, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
-        super().__init__(username, name, password, user_type)
+    def __init__(self, id, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
+        super().__init__(id, username, name, password, user_type)
 
 class Classes:
     def __init__(self, id, admin, coach, date, time, members=None, user_type="classes"):

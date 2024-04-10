@@ -4,9 +4,6 @@
   <head>
     <title>Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
-    <nav>
-      <a href="/payment">Make a Payment</a>
-    </nav>
 
     <!-- ______________________________________________________________________________________________________-->
 
@@ -33,6 +30,17 @@
       .signup{
         float: right
       }
+      nav {
+        background-color: #333333; /* background color */
+        color: white; /* Text color */
+        padding: 15px; /* padding around links */
+        text-align: center; /* center align */
+    }
+    nav a {
+        color: white; /* Link text color */
+        text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
+        margin-right: 20px; /* Add space between links */
+    }
   </style>
   </head>
 
@@ -42,11 +50,14 @@
     <div align='center'> 
         <div>
           <h1>Recreational Club Membership</h1>
+          <nav>
+            <a href="/payment">Make a Payment</a>
+          </nav>  
           <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
           <h3>This is your member homepage!<h3>
-
         </div>
         
+
 
         <div>
           <h2>Your Upcoming Classes</h2>

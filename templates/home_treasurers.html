@@ -26,6 +26,27 @@
           width: 30%; /* Adjust the width as needed */
 
       }
+
+      nav {
+            background-color: #333333; /* background color */
+            color: white; /* Text color */
+            padding: 15px; /* padding around links */
+            text-align: center; /* center align */
+        }
+        nav a {
+            color: white; /* Link text color */
+            text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
+            margin-right: 20px; /* Add space between links */
+        }
+
+              /* CSS style for the yellow block */
+      #welcomeBlock {
+            background-color: rgb(255, 223, 106);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            width: 30%; /* Adjust the width as needed */
+      }
   </style>
   </head>
 
@@ -35,23 +56,36 @@
     <div align='center'> 
         <div>
           <h1>Recreational Club Membership</h1>
-          <h2>Welcome <span>{{userInfo[0]}}</span>!</h2>
-          <h3>This is your treasurer homepage!<h3>
+
 
 
         </div>
         
+       <!-- Navigation links -->
+       <nav>
+        <a href="/Incomes">Incomes</a>
+        <a href="/Statements">Statements</a>
+        <a href="/Payments">Payments</a>
+        <a href="/Members">Members</a>
+        <a href="/home_treasures.html">Classes</a> <!-- should lead to current home treasurer page-->
+    </nav>
 
-        <div>
-          <h2>Classes</h2>
-          <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
+
+
+          <div id="welcomeBlock"> <!-- Yellow block for welcome message -->
+              <h2>Welcome <span>{{userInfo[0]}}</span>!</h2>
+              <h3>This is your treasurer homepage!</h3>
+          </div>
+
+
+          <div><h2>Classes</h2>
           <button onclick="createClass()">Create a Class</button> <!-- onclick attribute -->
           <h2>Classes available</h2>
-      </div>
-
+          </div>
 
       <!-- white rectangle container for the list of classes -->
       <div class="classListContainer">
+        
         <div id="Content"></div>
        </div>
 
@@ -63,7 +97,7 @@
         <div id="ClassDetails"> <!-- display class details as message-->
         </div>
         
-        
+
 
    <!-- ______________________________________________________________________________________________________-->
 

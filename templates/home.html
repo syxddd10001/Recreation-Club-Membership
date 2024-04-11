@@ -27,9 +27,6 @@
           padding-left: 20px
 
       }
-      .signup{
-        float: right
-      }
       nav {
         background-color: #333333; /* background color */
         color: white; /* Text color */
@@ -96,7 +93,7 @@
         <div id="Content"></div>
           {% for class in allClasses %}   
           <p>{{class.coach}} - {{class.time}}, {{class.date}}
-            <button class="signup" onclick="signUp('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')">Sign Up For Class</button>
+            <button onclick="signUp('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')" style="float: right">Sign Up For Class</button>
           </p>
           {% endfor %}
        </div>

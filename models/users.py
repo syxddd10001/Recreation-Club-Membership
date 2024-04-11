@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 class User: 
     def __init__(self, id, username, name, password, user_type):
         self.id = id
@@ -89,8 +90,12 @@ class Coach(User):
     
 
 class Treasurer(User):
-    def __init__(self, id, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
+    def __init__(self, id, username, name, password, user_type='treasurers', expenses=None, revenues=None):
         super().__init__(id, username, name, password, user_type)
+        self.expenses = expenses or [] # this might be redundant
+        self.revenues = revenues or [] # this might be redundant
+
+        # ?? storing expenses and revenues locally on treasureres' account might be redundant since they are universal
 
 class Classes:
     def __init__(self, id, admin, coach, date, time, members=None, user_type="classes"):
@@ -112,22 +117,11 @@ class Classes:
         return json.dumps(self.__dict__)  
 
 class Transaction:
-    def __init__(self, id, amount=0):
+    def __init__(self, id, title, status, transaction_type, date_due, amount=0, date=datetime.now().strftime("%m/%d/%Y")):
         self.id = id
+        self.title = title
+        self.status = status # paid or unpaid
+        self.transaction_type = transaction_type # expense or revenue
         self.amount = amount
-
-class Expense(Transaction):
-    def __init__(self, id, amount, expense_type):
-        super().__init__(id, amount)
-        self.expense_type = expense_type
-
-    def increment_amount(self, inc_amount):
-        self.amount += inc_amount
-
-class Income(Transaction):
-    def __init__(self, id, amount, income_type):
-        super().__init__(id, amount)
-        self.expense_type = income_type
-
-    def increment_amount(self, inc_amount):
-        self.amount += inc_amount
+        self.date = date
+        self.date_due = date_due

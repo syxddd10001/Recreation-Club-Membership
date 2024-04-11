@@ -2,7 +2,7 @@
 import sys
 import re
 import os
-
+from datetime import datetime 
 from flask import (Flask,
                    render_template,
                    request,
@@ -13,12 +13,13 @@ from flask_cors import CORS
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
 sys.path.append("./models")
-from users import User, Member, Coach, Treasurer, Classes
+from users import User, Member, Coach, Treasurer, Classes, Transaction
 
 ERROR = ""
 blacklist = ['--','"',"'", ';'] # list of invalid characters
 LOGGED_USER = None
 ALL_CLASSES = []
+ALL_TRANSACTIONS = []
 
 app = Flask(__name__)
 CORS(app)
@@ -246,7 +247,7 @@ def update_user_data(user_type):
 
 def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classes=[], upcoming_classes=[]) -> bool:
     """Writes user data to file
-        Write user data to ./data/*.json files                 
+        Write user data to ./data/(members|treasurers|coaches).json files                 
         
         Arguments: username, password, member type (strings)
         Optional arguments: finished_classes, upcoming_classes
@@ -288,6 +289,16 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                       upcoming_classes=[])
 
 
+    if utype == 'treasurers':
+        user = Treasurer(id=new_id,
+                          username=uName,
+                          name=FLname,
+                          password=passw,
+                          usertype=utype,
+                          expenses=[], # list of Expense classes
+                          revenues=[] # list of Income classes
+                          ) 
+
     
     new_user = { new_id : user.__dict__ }
     
@@ -297,11 +308,11 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
 
     return True
 
-def write_classes(admin, members, coach, date, time, utype='classes'):
-    """Writes object data to file
-        Write object data to ./data/*.json files                 
+def write_classes(admin, members, coach, date, time, utype='classes') -> bool:
+    """Writes classes data to file
+        Write classes data to ./data/classes.json files                 
         
-        Arguments: id, admin, members, coachm date, time, utype (strings)
+        Arguments: id, admin, members, coach date, time, utype (strings)
         Optional arguments: finished_classes, upcoming_classes
 
         Returns True if the write was successful
@@ -334,7 +345,43 @@ def write_classes(admin, members, coach, date, time, utype='classes'):
     
     return True
 
-def read_users(type :str) -> User: 
+def write_transactions(title, status, transaction_type, amount, date, date_due, utype="transactions") -> bool:
+    """Writes transaction data to file
+        Write transaction data to ./data/*.json files                 
+        
+        Arguments: title, status, transaction_type, amount (float), date, date_due (strings)
+
+        Returns True if the write was successful
+        Returns False otherwise
+    """
+    try:
+        with open(os.path.join('data', utype+'.json'), 'r') as f:
+            userdata = json.load(f)
+    
+    except FileNotFoundError:
+        userdata = []
+
+    obj = None
+    new_id = (str(len(userdata) + 1)) 
+
+    if utype == 'transactions':
+        obj = Transaction(id=new_id,
+                          title=title, 
+                          status=status, 
+                          amount=amount,
+                          transaction_type=transaction_type,
+                          date=date,
+                          date_due=date_due)
+
+    new_obj = { new_id : obj.__dict__ }
+    userdata.append(new_obj)
+    
+    with open(os.path.join('data', utype+'.json'), 'w') as f:
+        json.dump(userdata, f, indent=4)
+
+    return True
+
+def read_users(type :str) -> dict: 
     """Read user data
         Reads user data from ./data/*.json files                 
         
@@ -384,25 +431,34 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     return_user = None
     if u_type == "members": 
         return_user = Member(id=user["id"],
-                        username=user["username"],
-                        name=user["name"], 
-                        password=user["password"], 
-                        finished_classes=user["finished_classes"],
-                        upcoming_classes=user["upcoming_classes"],
-                        member_type=user["member_type"],
-                        user_type=user["user_type"],
-                        monthly_sub_count=user["monthly_sub_count"],
-                        consecutive_attendance=user["consecutive_attendance"])    
+                            username=user["username"],
+                            name=user["name"], 
+                            password=user["password"], 
+                            finished_classes=user["finished_classes"],
+                            upcoming_classes=user["upcoming_classes"],
+                            member_type=user["member_type"],
+                            user_type=user["user_type"],
+                            monthly_sub_count=user["monthly_sub_count"],
+                            consecutive_attendance=user["consecutive_attendance"])    
 
     elif u_type == "coaches":
         return_user = Coach(id=user["id"],
-                      username=user["username"],
-                      name=user["name"],
-                      password=user["password"],
-                      user_type=user["user_type"],
-                      finished_classes=user["finished_classes"],
-                      upcoming_classes=user["upcoming_classes"])
+                            username=user["username"],
+                            name=user["name"],
+                            password=user["password"],
+                            user_type=user["user_type"],
+                            finished_classes=user["finished_classes"],
+                            upcoming_classes=user["upcoming_classes"])
 
+    elif u_type == "treasurers":
+        return_user = Treasurer(id=user["id"],
+                                username=user["username"],
+                                name=user["name"],
+                                password=user["password"],
+                                user_type=user["user_type"],
+                                expenses=user["expenses"],
+                                revenues=user["revenues"])
+    
     elif u_type == "classes":    
         return_user = Classes(id=user["class_id"],
                               admin=user["admin"],
@@ -413,6 +469,15 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                               user_type=user["user_type"])
         
 
+    elif u_type == "transactions":
+        return_user = Transaction(id=user["id"],
+                              admin=user["admin"],
+                              title=user["title"],
+                              status=user["status"],
+                              transaction_type=user["transaction_type"],
+                              amount=user["amount"],
+                              date=user["date"],
+                              date_due=user["date_due"])
 
     return return_user
 

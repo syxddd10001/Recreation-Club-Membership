@@ -153,8 +153,9 @@ def getstatement():
         ERROR = 'You must be logged in as a treasurer to perform this action!'
         return jsonify({'error':ERROR})
 
-
-    return render_template('statements.html')
+    revenues = get_transactions("revenue")
+    expenses = get_transactions("expense")
+    return render_template('statements.html', allRevenues=revenues, allExpenses=expenses)
 
 """Server methods"""
 
@@ -679,14 +680,54 @@ def validate_credit_card()->bool:
 
     return True
 
+def get_transactions(transaction_type) -> list:
+    """get expenses function
+        Gets a list of all the revenues or incomes from transactions.json
+        
+        Arguments: transaction_type (string)
+
+        Returns a list of Transaction objects
+    """
+    transactions = []
+    data = read_users("transactions")
+    if data is None:
+        return transactions
+    
+    for rx in data.values():
+        if rx["transaction_type"] == transaction_type:
+            transactions.append(dict_to_class(rx))
+
+    return transactions
 
 
+def get_unpaid_expenses(transaction_type, status) -> list:
+    """get expenses function
+        Gets a list of all the unpaid expenses from transactions.json
+        
+        Arguments: transaction_type, status (string) # status = paid/unpaid
 
-def get_expenses() -> list:
+        Returns a list of unpaid Transaction objects sorted by date
+    """
     pass
-def get_revenues() -> list:
+
+def get_accounts_payables(transaction_type, status) -> list:
+    """get expenses function
+        Gets a list of all the payments that were made in advance from transactions.json
+        
+        Arguments: transaction_type (string), status # status = paid/unpaid
+
+        Returns a list of unpaid Transaction objects sorted by date
+    """
     pass
+    
+
 def get_members() -> list:
+    """get members function
+        Gets a list of all the members
+
+        Returns a list of Member objects
+    """
+    
     pass
 
 #main function

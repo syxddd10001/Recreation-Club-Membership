@@ -65,29 +65,21 @@
        <nav>
         <a href="/statements.html">Statements</a>
         <a href="/members.html"> Club Members</a>
-        <a href="/home_treasures.html">Classes</a> <!-- should lead to current home treasurer page-->
+        <a href="/home_treasures.html">Classes</a> 
     </nav>
 
 
-
-          <div id="welcomeBlock"> <!-- Yellow block for welcome message -->
-              <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
-              <h3>This is your treasurer homepage!</h3>
-          </div>
-
-
-          <h2>All Upcoming Classes</h2>
+          <div>
+            <h2>All Members</h2>
+            <h2>Member Logs</h2>
+            <h2>Member Frequency</h2>
           </div>
 
       <!-- white rectangle container for the list of classes -->
       <div class="classListContainer">
         
         <div id="Content"></div>
-          {% for class in allClasses %}   
-          <p>{{class.coach}} - {{class.time}}, {{class.date}}
-            <button class="edit" onclick="editClass('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')">Edit Details</button>
-          </p>
-          {% endfor %}
+       </div>
 
 
         
@@ -103,25 +95,6 @@
 
         <script>
         var classes = []; // store created classes
-
-          function editClass(id, coach, date, Time) {
-            // print class details in ClassDetails div
-        }
-
-
-            // implement js method to get the username and render it in the home page
-            fetch('/home', {
-              method: 'GET',
-          })
-          .then(response => response.text())
-          .then(username => {
-            //const parsedData = JSON.parse(data);
-              document.getElementById("username").innerHTML = username
-              // Use the username as needed, e.g., display it in the UI
-          })
-          .catch(error => {
-              console.error('Error:', error);
-          });
 
       
             

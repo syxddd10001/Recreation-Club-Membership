@@ -37,27 +37,30 @@
           <h3>This is your coach homepage!<h3>
         </div>
         
+        <button onclick="createClass()">Create a Class</button>
 
         <h2>Your Upcoming Classes</h2>
         <div class="classListContainer">
           {% for class in userInfo.upcoming_classes %}
           <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
-            <button onclick=showMembers() style="float: right">Edit Class</button>
+            <button onclick="showMembers()" style="float: right">Edit Class</button>
             <div class="classListContainer" id="classList">
               {% for member in allMembers%}
               {%if is in(member, class.members)%}
               <h2> Remove a Member </h2>
               {%for remMember in class.members%}
               <p>{{remMember.name}}</p>
-              <button onclick=editClass({{remMember}}, {{class.members}}) style="float: right">Remove</button>
+              <button onclick="editClass({{remMember}}, {{class.members}})" style="float: right">Remove</button>
               {%endfor%}
               {%else%}
               <h2> Add a Member</h2>
               <p>{{member.name}}</p>
-              <button onclick=editClass({{member}}, {{class.members}}) style="float: right">Add</button>
+              <button onclick="editClass({{member}}, {{class.members}})" style="float: right">Add</button>
               {%endif%}
+              {%endfor%}
             </div>
           {% endfor %}
+          
       </div>
 
 
@@ -91,7 +94,6 @@
         var classes = []; // store created classes
 
         function createClass() { // makes a pop up that asks you to enter the name of the class
-
             var classDay = prompt("Please enter the Date in the format: XX / XX / XXXX" ); //get timing, btw need to add a cancel function
             if (classDay !== null && classDay!== "") {
                 var classTime = prompt("Please enter the Time in the format: XX:XX AM/PM")
@@ -100,13 +102,13 @@
                   document.getElementById("classContent").innerText = "You have created a class on: " + classDay + " at " + classTime;
                
                
-                 fetch('/createdClass', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(coach:userInfo.name, day: classDay, time: classTime),
-              })
+                  fetch('/createdClass', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ coach: userInfo.name, day: classDay, time: classTime }), // corrected syntax here
+                });
             }
           }
         }
@@ -116,20 +118,20 @@
           popup.classList.toggle("show");
         }
              
-        function editClass(member, class){
-             if(class.includes(member)){
-              let index = class.indexOf(member);
-              class.splice(index, 1);
+        function editClass(member, classList){
+             if(classList.includes(member)){
+              let index = classList.indexOf(member);
+              classList.splice(index, 1);
              }
              else{
-              class.push(member);
+              classList.push(member);
              }
                fetch('/editClass', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(memberList: class),
+                body: JSON.stringify(classLisr: classList),
             })
           }
           

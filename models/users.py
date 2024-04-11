@@ -9,11 +9,11 @@ class User:
 
 
 class Member(User):
-    def __init__(self, id, username, name, password, finished_classes=[], upcoming_classes=[], user_type='members', member_type='regular', monthly_sub_count=0, consecutive_attendance=0):
+    def __init__(self, id, username, name, password, finished_classes=None, upcoming_classes=None, user_type='members', member_type='regular', monthly_sub_count=0, consecutive_attendance=0):
         super().__init__(id, username, name, password, user_type)
         self.member_type=member_type
-        self.finished_classes=finished_classes
-        self.upcoming_classes=upcoming_classes
+        self.finished_classes=finished_classes or []
+        self.upcoming_classes=upcoming_classes or []
         self.monthly_sub_count=monthly_sub_count
         self.consecutive_attendance=consecutive_attendance
     
@@ -22,12 +22,10 @@ class Member(User):
       
     
     def get_classes(self):
-        past = self.finished_classes
-        future = self.upcoming_classes
-        return past.append(future)
+        return self.finished_classes + self.upcoming_classes
 
     def change_member_type(self, update_type):
-        if update_type != 'regular' or update_type != 'monthly':
+        if update_type not in ('regular', 'monthly'):
             return False
         
         self.member_type=update_type
@@ -51,9 +49,8 @@ class Member(User):
         if class_data is None:
             return False
         
-        for c in self.upcoming_classes:
-            if c == class_data:
-                self.upcoming_classes.remove(class_data)
+        if class_data in self.upcoming_classes:
+            self.upcoming_classes.remove(class_data)
 
         self.finished_classes.append(class_data)
         return True
@@ -64,25 +61,24 @@ class Member(User):
     
 
 class Coach(User):
-    def __init__(self, username, name, password, finished_classes=[], upcoming_classes=[], user_type='coaches'):
-        super().__init__(username, name, password, user_type)
-        self.finished_classes=finished_classes
-        self.upcoming_classes=upcoming_classes
+    def __init__(self, id, username, name, password, finished_classes=None, upcoming_classes=None, user_type='coaches'):
+        super().__init__(id, username, name, password, user_type)
+        self.finished_classes=finished_classes or []
+        self.upcoming_classes=upcoming_classes or []
 
     def add_upcoming_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Classes):
+        if class_data is None or not isinstance(class_data, Classes):
             return False
         
         self.upcoming_classes.append(class_data)
         return True
 
     def add_finished_class(self, class_data) -> bool:
-        if class_data is None or class_data is not isinstance(class_data, Classes):
+        if class_data is None or not isinstance(class_data, Classes):
             return False
         
-        for c in self.upcoming_classes:
-            if c == class_data:
-                self.upcoming_classes.remove(class_data)
+        if class_data in self.upcoming_classes:
+            self.upcoming_classes.remove(class_data)
 
         self.finished_classes.append(class_data)
         return True
@@ -93,19 +89,18 @@ class Coach(User):
     
 
 class Treasurer(User):
-    def __init__(self, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
-        super().__init__(username, name, password, user_type)
+    def __init__(self, id, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
+        super().__init__(id, username, name, password, user_type)
 
 class Classes:
-    def __init__(self, id, admin, coach, date, time, members=[], user_type="classes"):
+    def __init__(self, id, admin, coach, date, time, members=None, user_type="classes"):
         self.id = id
         self.admin = admin
         self.coach = coach
         self.date = date
         self.time = time
         self.user_type = user_type
-        self.members = members
-        self.user_type = user_type
+        self.members = members or []
     
     def add_member(self, member):
         self.members.append(member)

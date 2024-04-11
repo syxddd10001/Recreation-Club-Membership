@@ -1,8 +1,8 @@
 <!DOCTYPE html> <!-- document type and version of HTML -->
 <html lang="en"> <!-- english -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <head>
     <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
 
     <!-- ______________________________________________________________________________________________________-->
@@ -47,6 +47,16 @@
      <!-- ______________________________________________________________________________________________________-->
 
   <body style="background: rgb(199, 233, 243);">
+    
+    <nav>
+      <a href="/login">Sign Out</a>
+    </nav>
+    
+    <nav>
+      <a href="/payment">Make a Payment</a>
+    </nav>
+
+
     <div align='center'> 
         <div>
           <h1>Recreational Club Membership</h1>
@@ -54,7 +64,8 @@
             <a href="/payment">Make a Payment</a>
           </nav>  
           <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
-          <h3>This is your member homepage!<h3>
+          <h3>This is your member homepage!</h3>
+
         </div>
         
 
@@ -62,7 +73,11 @@
         <div>
           <h2>Your Upcoming Classes</h2>
           {% for class in upcomingClasses %}
-            <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+            <div>
+              <h3> {{class.name}} </h3>
+              <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+              
+            </div>
           {% endfor %}
           <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
            <!-- onclick attribute -->

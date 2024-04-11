@@ -50,16 +50,7 @@
             "user_type": "members",
             "member_type": "regular",
             "finished_classes": [],
-            "upcoming_classes": [
-                {
-                    "class_id": "1",
-                    "payment_status": "paid"
-                },
-                {
-                    "class_id": "2",
-                    "payment_status": "unpaid"
-                }
-            ],
+            "upcoming_classes": [],
             "monthly_sub_count": 0,
             "consecutive_attendance": 0
         }

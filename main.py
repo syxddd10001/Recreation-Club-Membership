@@ -20,6 +20,7 @@ blacklist = ['--','"',"'", ';'] # list of invalid characters
 LOGGED_USER = None
 ALL_CLASSES = []
 ALL_TRANSACTIONS = []
+ALL_MEMBERS = []
 
 app = Flask(__name__)
 CORS(app)
@@ -62,11 +63,20 @@ def home():
         if LOGGED_USER:
             u_type = LOGGED_USER.__dict__['user_type']
             classes = read_users('classes')
+            transactions = read_users('transactions')
             global ALL_CLASSES
             ALL_CLASSES = []
-
+            
+            global ALL_TRANSACTIONS
+            ALL_TRANSACTIONS = []
+            
             for c in classes.values():
                 ALL_CLASSES.append(dict_to_class(c))           
+
+            if LOGGED_USER.user_type == "treasurers":
+                for t in transactions.values():
+                    ALL_TRANSACTIONS.append(dict_to_class(t))
+
 
             if u_type == 'members':
                 upcoming_classes = classes_signed_up_for(LOGGED_USER.upcoming_classes)
@@ -74,7 +84,7 @@ def home():
                 return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes, upcomingClasses=upcoming_classes) #return all classes as well
             
             elif u_type == 'treasurers':
-                return render_template('home_treasurers.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES)#return all classes as well
+                return render_template('home_treasurers.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES, allTransactions=ALL_TRANSACTIONS)#return all classes as well
             
             elif u_type == 'coaches':
                 return render_template('home_coaches.html', userInfo=LOGGED_USER, allClasses=ALL_CLASSES) #return all classes as well
@@ -108,14 +118,15 @@ def payment():
 
     return render_template('payment.html', userInfo=LOGGED_USER, classInfo=ALL_CLASSES, signedupClasses=common_classes, unpaidClasses=unpaid_classes, paidClasses=paid_classes)
  
-
 @app.route('/payclass', methods=['GET', 'POST'])
 def payclass():
     if not LOGGED_USER:
         return redirect('login')
 
     if request.method == 'POST':
-        print("running ")
+        if not validate_credit_card():
+            return jsonify({'error':'true', 'message':'Payment unsuccessful, enter valid information'})
+
         if pay_class_server():
             print("successfully paid")
             return jsonify({'success':'true', 'message':'Payment was successful!'})
@@ -128,11 +139,22 @@ def signupclass():
         return redirect('login')
     
     if request.method == 'POST':
-        print('ROSSSS')
         if signup_class_server():
             return jsonify({'success':'true'})
         else:
             return jsonify({'error':'true'})
+
+@app.route('/getstatement', methods=['GET', 'POST'])
+def getstatement():
+    if not LOGGED_USER:
+        return redirect('login')
+    
+    if not LOGGED_USER.user_type == 'treasurers':
+        ERROR = 'You must be logged in as a treasurer to perform this action!'
+        return jsonify({'error':ERROR})
+
+
+    return render_template('statements.html')
 
 """Server methods"""
 
@@ -245,6 +267,27 @@ def update_user_data(user_type):
         
     return False
 
+def update_all():
+    classes = read_users('classes')
+    transactions = read_users('transactions')
+
+    global ALL_CLASSES
+    ALL_CLASSES = []
+    
+    global ALL_TRANSACTIONS
+    ALL_TRANSACTIONS = []
+    
+    for c in classes.values():
+        ALL_CLASSES.append(dict_to_class(c)) 
+
+    if LOGGED_USER.user_type == "treasurers":
+        for t in transactions.values():
+            ALL_TRANSACTIONS.append(dict_to_class(t))
+
+    return True and update_user_data(LOGGED_USER.user_type)
+    
+    
+
 def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classes=[], upcoming_classes=[]) -> bool:
     """Writes user data to file
         Write user data to ./data/(members|treasurers|coaches).json files                 
@@ -295,8 +338,6 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                           name=FLname,
                           password=passw,
                           usertype=utype,
-                          expenses=[], # list of Expense classes
-                          revenues=[] # list of Income classes
                           ) 
 
     
@@ -412,7 +453,7 @@ def read_users(type :str) -> dict:
 
     return result_dict
 
-def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
+def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | Transaction | None:
     """Dict to User Class 
         Converts a dictionary to user class               
         
@@ -455,9 +496,8 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                                 username=user["username"],
                                 name=user["name"],
                                 password=user["password"],
-                                user_type=user["user_type"],
-                                expenses=user["expenses"],
-                                revenues=user["revenues"])
+                                user_type=user["user_type"]
+                                )
     
     elif u_type == "classes":    
         return_user = Classes(id=user["class_id"],
@@ -471,9 +511,9 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
 
     elif u_type == "transactions":
         return_user = Transaction(id=user["id"],
-                              admin=user["admin"],
                               title=user["title"],
                               status=user["status"],
+                              user_type=user["user_type"],
                               transaction_type=user["transaction_type"],
                               amount=user["amount"],
                               date=user["date"],
@@ -537,25 +577,27 @@ def pay_class_server():
         Returns False otherwise
     """
     
-    class_id = request.json.get('class_id')
+    class_id = request.json.get('class_id') # get the class id which is to be paid
     all_local_classes = LOGGED_USER.finished_classes + LOGGED_USER.upcoming_classes
+    # get all current users classes 
 
     payment_for = find_in_dict(all_local_classes, "class_id", class_id)
+    # finding the class from the users class list
 
     new_list = []
     
-    for cl in LOGGED_USER.upcoming_classes:
+    for cl in LOGGED_USER.upcoming_classes: # this basically goes through all the users classes and updates the status to paid
         if cl == payment_for[0]:
             new_obj = {'class_id':payment_for[0]['class_id'], "payment_status":"paid"}
             new_list.append(new_obj)
             continue 
         new_list.append(cl)
 
-    if new_list != LOGGED_USER.upcoming_classes:
-        return(update_json_file('members', LOGGED_USER.id, 'upcoming_classes', new_list))
+    if new_list != LOGGED_USER.upcoming_classes: # if there was a change in the list, i.e if any of the class' status was changed
+        return(update_json_file('members', LOGGED_USER.id, 'upcoming_classes', new_list)) # return if the update was successful
 
     new_list = []
-    for cl in LOGGED_USER.finished_classes:
+    for cl in LOGGED_USER.finished_classes: #same as above but with finished classes
         if cl == payment_for[0]:
             new_obj = {'class_id':payment_for[0]['class_id'], "payment_status":"paid"}
             new_list.append(new_obj)
@@ -610,6 +652,42 @@ def finish_class_server():
 
     return update_json_file('members', LOGGED_USER.id, "finished_classes", LOGGED_USER.finished_classes)
 
+def validate_credit_card()->bool:
+    cc_num = request.json.get('cardnumber') # 1234-5678-5678-5678 or 1234 5678 5678 5678
+    exp = request.json.get('expdate') # 2024-03-20
+    cvv = request.json.get('cvv') # 123
+
+    if cc_num == None or exp == None or cvv == None:
+        return False
+    
+    cc_num = ''.join(c for c in cc_num if c.isdigit()) # converting from 1234-5678-5678-5678 to 1234567856785678
+
+    today = datetime.today().date() # todays date 
+    #from datetime import datetime for this
+
+    exp = datetime.strptime(str(exp), "%Y-%m-%d").date()
+    #convert this to datetime format for comparison
+
+    if len(cc_num) != 16:
+        return False
+       
+    if exp < today:
+        return False
+
+    if len(cvv) != 3:  
+        return False  
+
+    return True
+
+
+
+
+def get_expenses() -> list:
+    pass
+def get_revenues() -> list:
+    pass
+def get_members() -> list:
+    pass
 
 #main function
 if __name__ == "__main__":

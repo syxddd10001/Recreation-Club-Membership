@@ -90,10 +90,8 @@ class Coach(User):
     
 
 class Treasurer(User):
-    def __init__(self, id, username, name, password, user_type='treasurers', expenses=None, revenues=None):
+    def __init__(self, id, username, name, password, user_type='treasurers'):
         super().__init__(id, username, name, password, user_type)
-        self.expenses = expenses or [] # this might be redundant
-        self.revenues = revenues or [] # this might be redundant
 
         # ?? storing expenses and revenues locally on treasureres' account might be redundant since they are universal
 
@@ -117,10 +115,11 @@ class Classes:
         return json.dumps(self.__dict__)  
 
 class Transaction:
-    def __init__(self, id, title, status, transaction_type, date_due, amount=0, date=datetime.now().strftime("%m/%d/%Y")):
+    def __init__(self, id, title, status, transaction_type, date_due, user_type="transactions", amount=0, date=datetime.now().strftime("%m/%d/%Y")):
         self.id = id
         self.title = title
         self.status = status # paid or unpaid
+        self.user_type=user_type
         self.transaction_type = transaction_type # expense or revenue
         self.amount = amount
         self.date = date

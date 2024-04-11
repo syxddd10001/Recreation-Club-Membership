@@ -1,13 +1,12 @@
 Note to self:
 
 - Fix id's (either make every json have own id type, like member_id, or make id's uniform all around)
-
+- Add class name (fix class structure both in users.py and main.py)
 
 What to do:
-- Add signout from homepage
 - Create group page, where you select a specific group and go to its page. All are the same
   except that they have their own individual information. 
-  --> Page contains payment link (with auto select on group payment)
+  --> Page contains payment link (with auto select on group payment) ****
   --> Forum (to be added soon)  
 - CSS in all pages (make it look prettier)
 - Work on treasurer (Likely not enough time to finish)

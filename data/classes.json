@@ -5,7 +5,11 @@
             "admin": "admin_username",
             "user_type": "classes",
             "members": [
-                
+                {
+                    "id": "4",
+                    "username": "admin",
+                    "name": "admin"
+                }
             ],
             "coach": "coach1",
             "date": "03/26/2024",
@@ -18,7 +22,11 @@
             "admin": "admin_username",
             "user_type": "classes",
             "members": [
-                
+                {
+                    "id": "4",
+                    "username": "admin",
+                    "name": "admin"
+                }
             ],
             "coach": "coach2",
             "date": "03/29/2024",

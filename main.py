@@ -160,6 +160,8 @@ def login_server() -> bool:
             ERROR="Bad username or password provided"
             return False
 
+    # hashedpassword = generate_password_hash( password, method='scrypt' )
+
     if check_user(user, password, user_type):
         return True
     else:
@@ -190,6 +192,7 @@ def signup_server() -> bool:
 
 
     if user == "" or password == "" or name == "":
+        ERROR = "Name, username or password cannot be empty"
         return False
 
     for char in blacklist:
@@ -344,7 +347,7 @@ def read_users(type :str) -> User:
     """
     file_data = None
     result_dict = {}
-    json_files = [f for f in os.listdir("data") if f.endswith('.json')]
+    #json_files = [f for f in os.listdir("data") if f.endswith('.json')]
 
 
     file_path = os.path.join("data", type+'.json')
@@ -354,7 +357,7 @@ def read_users(type :str) -> User:
 
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"No such file: {0}.json".format(type))
-
+        return result_dict
 
     if file_data is not None:
         for item in file_data:
@@ -380,7 +383,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     
     return_user = None
     if u_type == "members": 
-        return_user = Member(id=user["member_id"],
+        return_user = Member(id=user["id"],
                         username=user["username"],
                         name=user["name"], 
                         password=user["password"], 
@@ -392,7 +395,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                         consecutive_attendance=user["consecutive_attendance"])    
 
     elif u_type == "coaches":
-        return_user = Coach(id=user["coach_id"],
+        return_user = Coach(id=user["id"],
                       username=user["username"],
                       name=user["name"],
                       password=user["password"],
@@ -528,7 +531,7 @@ def signup_class_server():
 
     for cl in ALL_CLASSES:
         if class_id == cl.id:
-            cl.add_member({"member_id":LOGGED_USER.id, "username":LOGGED_USER.username, "name":LOGGED_USER.name})
+            cl.add_member({"id":LOGGED_USER.id, "username":LOGGED_USER.username, "name":LOGGED_USER.name})
 
             update_json_file('classes', cl.id, "members", cl.members)
             return True

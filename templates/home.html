@@ -1,12 +1,9 @@
 <!DOCTYPE html> <!-- document type and version of HTML -->
 <html lang="en"> <!-- english -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <head>
     <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
-    <nav>
-      <a href="/payment">Make a Payment</a>
-    </nav>
 
     <!-- ______________________________________________________________________________________________________-->
 
@@ -39,11 +36,14 @@
      <!-- ______________________________________________________________________________________________________-->
 
   <body style="background: rgb(199, 233, 243);">
+    <nav>
+      <a href="/payment">Make a Payment</a>
+    </nav>
     <div align='center'> 
         <div>
           <h1>Recreational Club Membership</h1>
           <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
-          <h3>This is your member homepage!<h3>
+          <h3>This is your member homepage!</h3>
 
         </div>
         

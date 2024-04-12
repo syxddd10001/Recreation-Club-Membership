@@ -68,7 +68,7 @@ class Coach(User):
         self.upcoming_classes=upcoming_classes or []
 
     def add_upcoming_class(self, class_data) -> bool:
-        if class_data is None or not isinstance(class_data, Classes):
+        if class_data is None:
             return False
         
         self.upcoming_classes.append(class_data)
@@ -96,8 +96,8 @@ class Treasurer(User):
         # ?? storing expenses and revenues locally on treasureres' account might be redundant since they are universal
 
 class Classes:
-    def __init__(self, id, admin, coach, date, time, members=None, user_type="classes"):
-        self.id = id
+    def __init__(self, class_id, admin, coach, date, time, members=None, user_type="classes"):
+        self.class_id = class_id
         self.admin = admin
         self.coach = coach
         self.date = date
@@ -110,7 +110,7 @@ class Classes:
     
     def get_members(self):
         return self.members
-    
+
     def to_json(self):
         return json.dumps(self.__dict__)  
 

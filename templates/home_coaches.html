@@ -37,12 +37,12 @@
           <h3>This is your coach homepage!<h3>
         </div>
         
-        <button onclick="createClass()">Create a Class</button>
+        <button onclick="createclass()">Create a Class</button>
 
         <h2>Your Upcoming Classes</h2>
         <div class="classListContainer">
-          {% for class in userInfo.upcoming_classes %}
-          <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+          {% for class in upcomingClasses %}
+          <p>class {{class.class_id}} - {{class.time}}, {{class.date}}</p>
             <button onclick="showMembers()" style="float: right">Edit Class</button>
             <div class="classListContainer" id="classList">
               {% for member in allMembers%}
@@ -69,7 +69,7 @@
       <div class="classListContainer">
         <div id="Content"></div>
         {% for class in allClasses %}   
-        <p>{{class.coach}} - {{class.time}}, {{class.date}}
+        <p>class: {{class.class_id}} {{class.coach}} - {{class.time}}, {{class.date}}
         </p>
         {% endfor %}
 
@@ -85,7 +85,6 @@
         name: "{{ userInfo.name }}",
         username: "{{userInfo.username}}",
         password: "{{userInfo.password}}",
-        type: "{{userInfo.type}}",
         user_type: "{{userInfo.user_type}}",
         finished_classes: "{{userInfo.finished_classes}}",
         upcoming_classes: "{{userInfo.upcoming_classes}}"
@@ -93,25 +92,44 @@
 
         var classes = []; // store created classes
 
-        function createClass() { // makes a pop up that asks you to enter the name of the class
-            var classDay = prompt("Please enter the Date in the format: XX / XX / XXXX" ); //get timing, btw need to add a cancel function
-            if (classDay !== null && classDay!== "") {
-                var classTime = prompt("Please enter the Time in the format: XX:XX AM/PM")
-                if (classTime !== null && classTime!== "") {
-                  classes.push({day: classDay, time: classTime});
-                  document.getElementById("classContent").innerText = "You have created a class on: " + classDay + " at " + classTime;
-               
-               
-                  fetch('/createdClass', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ coach: userInfo.name, day: classDay, time: classTime }), // corrected syntax here
-                });
+        function createclass() { // makes a pop up that asks you to enter the name of the class
+          console.log(userInfo.user_type);
+            var classDay = prompt("Please enter the Date in the format: MM/DD/YYYY" ); //get timing, btw need to add a cancel function
+            console.log(classDay);
+
+            var classTime = prompt("Please enter the Time in the format: hhmm 24 hour format")
+            console.log(classTime);
+            
+            classes.push({day: classDay, time: classTime});
+            //document.getElementById("classContent").innerText = "You have created a class on: " + classDay + " at " + classTime;     
+            fetch('/createclass', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username: userInfo.username, date: classDay, time: classTime, user_type:userInfo.user_type}) // corrected syntax here
+          })
+            .then(response => response.json())
+            .then(response => {
+                // Handle response from the backend if needed
+                if (response.error){
+                  console.log(response.error);
+                  alert("An error occured while creating the class, probably because you entered the wrong date format :(");
+                  window.location.href = "/home";
+                }
+                if (response.success) {
+                  console.log(response);
+                  alert("You have created a class on: " + classDay + " at " + classTime);
+                  window.location.href = "/home";
+              }
+
+            })
+            .catch(error => {
+              alert(response.message);
+              console.error('Error:', error);
+            });
             }
-          }
-        }
+        
 
         function showMembers(){
           var popup = document.getElementById("classList");
@@ -126,13 +144,14 @@
              else{
               classList.push(member);
              }
-               fetch('/editClass', {
+             /*  
+             fetch('/editClass', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(classLisr: classList),
-            })
+            })*/
           }
           
             

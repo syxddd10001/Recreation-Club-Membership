@@ -166,7 +166,27 @@ def statements():
 
 @app.route('/members', methods=['GET', 'POST'])
 def members():
-    pass
+    if not LOGGED_USER:
+        return redirect('login')
+    
+    global ALL_MEMBERS
+    ALL_MEMBERS = read_users("members").values()
+
+    global ALL_CLASSES
+    ALL_CLASSES = read_users("classes").values()
+
+    attended = [] # [[], []]
+    not_attended = []
+    for c in ALL_CLASSES:
+        x = get_members(c["class_id"])
+        attended.append(x[1])
+        not_attended.append(x[2])
+
+    return render_template('members.html',
+                           allMembers=ALL_MEMBERS,
+                           allClasses=ALL_CLASSES,
+                           attendedClasses=attended,
+                           notAttendedClasses=not_attended) ## return list of all members
 
 
 @app.route('/createclass', methods=['POST', 'POST'])
@@ -753,7 +773,14 @@ def get_unpaid_expenses(transaction_type, status) -> list:
 
         Returns a list of unpaid Transaction objects sorted by date
     """
-    pass
+    unpaid_transactions = []
+    data = read_users("transactions")
+
+    for ut in data.values():
+        if ut["transaction_type"] == transaction_type and ut["status"] == "unpaid":
+            unpaid_transactions.append(dict_to_class(ut))
+    
+    return unpaid_transactions
 
 def get_accounts_payables(transaction_type, status) -> list:
     """get expenses function
@@ -766,14 +793,45 @@ def get_accounts_payables(transaction_type, status) -> list:
     pass
     
 
-def get_members() -> list:
+def get_members(c_id) -> list:
     """get members function
         Gets a list of all the members
 
         Returns a list of Member objects
     """
+    ALL_MEMBERS = read_users("members")
+    classes_data = read_users("classes")
+
+    attended = []
+    not_attended = []
+
+    class_members = []
+
+    for cls in classes_data.values():
+        if cls["class_id"] == c_id:
+            for member in cls["members"]:
+                class_members.append(dict_to_class(ALL_MEMBERS[member["id"]]))
+
+    for member_id, member_info in ALL_MEMBERS.items():
+        for c in member_info['finished_classes']:
+            if c['class_id'] == c_id:
+                attended.append(dict_to_class(member_info))
+
+        for c in member_info['upcoming_classes']:
+            if c['class_id'] == c_id:
+                not_attended.append(dict_to_class(member_info))
+
+    return class_members, attended, not_attended
     
-    pass
+    """
+    members = []
+    all_members = read_users("members")
+    
+    for member in all_members.values():
+        members.append(dict_to_class(member))
+
+    return members 
+    """
 
 def create_class_server()->bool:
     username = request.json.get('username')
@@ -817,9 +875,8 @@ def is_valid_time(time_string):
     match = re.match(regex, time_string)
     return bool(match)
 
-def get_members(c_id) -> list:
-    pass
 
 #main function
 if __name__ == "__main__":
+    #print(get_members("1"))
     app.run(debug=True)

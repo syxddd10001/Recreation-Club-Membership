@@ -10,7 +10,12 @@
             "monthly_sub_count": 0,
             "consecutive_attendance": 0,
             "finished_classes": [],
-            "upcoming_classes": []
+            "upcoming_classes": [
+                {
+                    "class_id": "2",
+                    "payment_status": "paid"
+                }
+            ]
         }
     },
     {
@@ -24,7 +29,12 @@
             "monthly_sub_count": 0,
             "consecutive_attendance": 0,
             "finished_classes": [],
-            "upcoming_classes": []
+            "upcoming_classes": [
+                {
+                    "class_id": "1",
+                    "payment_status": "paid"
+                }
+            ]
         }
     },
     {

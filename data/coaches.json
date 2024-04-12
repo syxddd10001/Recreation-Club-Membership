@@ -7,13 +7,22 @@
             "password": "scrypt:32768:8:1$2UNLsJou8Ud2nW92$14d7e059f670f6113cc60c177178aa06a944d3d771d4c05bd19fccc8a0f7185d9ffca7977c739af3635f6f344fa28086a6c40ac0584c2b4ef97442615eb12580",
             "user_type": "coaches",
             "finished_classes": [],
-            "upcoming_classes": []
+            "upcoming_classes": [
+                {
+                    "class_id": 1,
+                    "payment_status": "unpaid"
+                },
+                {
+                    "class_id": 2,
+                    "payment_status": "unpaid"
+                }
+            ]
         }
     },
     {
         "2": {
             "id": "2",
-            "username": "coach1",
+            "username": "coach2",
             "name": "NameX",
             "password": "scrypt:32768:8:1$2BHNwPxMwht2a3JK$6f006f8847d34572e1145632bb14739d27fcd92a68f3b856ba297edcf1b37278c6adfc67f7e32d823d1e0a7c9ff1342ed6c0aa65152855151c0d4ec7f4be5f97",
             "user_type": "coaches",

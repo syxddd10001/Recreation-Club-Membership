@@ -13,10 +13,6 @@
       #Content {
           margin-top: 20px; /* can adjust number*/
       }
-      /* CSS style -> adds space for list of clubs */
-      #ClassDetails {
-          margin-top: 20px; /* can adjust number*/
-      }
       /* CSS style for the white rectangle */
       .classListContainer {
         background-color: white;
@@ -41,14 +37,30 @@
           <h3>This is your coach homepage!<h3>
         </div>
         
+        <button onclick="createClass()">Create a Class</button>
 
-        <div>
-          <h2>Your Upcoming Classes</h2>
+        <h2>Your Upcoming Classes</h2>
+        <div class="classListContainer">
           {% for class in userInfo.upcoming_classes %}
           <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+            <button onclick="showMembers()" style="float: right">Edit Class</button>
+            <div class="classListContainer" id="classList">
+              {% for member in allMembers%}
+              {%if is in(member, class.members)%}
+              <h2> Remove a Member </h2>
+              {%for remMember in class.members%}
+              <p>{{remMember.name}}</p>
+              <button onclick="editClass({{remMember}}, {{class.members}})" style="float: right">Remove</button>
+              {%endfor%}
+              {%else%}
+              <h2> Add a Member</h2>
+              <p>{{member.name}}</p>
+              <button onclick="editClass({{member}}, {{class.members}})" style="float: right">Add</button>
+              {%endif%}
+              {%endfor%}
+            </div>
           {% endfor %}
-          <!--<button onclick="displayClasses()">Find a Class</button> call displayClasses() when button is clicked -->
-
+          
       </div>
 
 
@@ -63,17 +75,6 @@
 
        </div>
 
-        <br>
-        <div id="classContent"> <!-- shows that we created a class, shows classes made-->
-        </div>
-        <br>
-        
-       <button onclick="createClass()">Create a New Class</button> <!-- onclick attribute -->
-
-
-
-        <div id="ClassDetails"> <!-- display class details as message-->
-        </div>
         
         
 
@@ -93,11 +94,6 @@
         var classes = []; // store created classes
 
         function createClass() { // makes a pop up that asks you to enter the name of the class
-
-          // var className = prompt("Enter the name of the class:");
-          // if (className !== null && className !== "") {
-            
-
             var classDay = prompt("Please enter the Date in the format: XX / XX / XXXX" ); //get timing, btw need to add a cancel function
             if (classDay !== null && classDay!== "") {
                 var classTime = prompt("Please enter the Time in the format: XX:XX AM/PM")
@@ -106,52 +102,40 @@
                   document.getElementById("classContent").innerText = "You have created a class on: " + classDay + " at " + classTime;
                
                
-                 fetch('/createdClass', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(coach:name, day: classDay, time: classTime),
-              })
-              .then(response => response.text())
-              .then(responseText => {
-                  // Handle response from the backend if needed
-                  console.log(responseText);
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-              });
-     }
-               }
-            
-            
+                  fetch('/createdClass', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ coach: userInfo.name, day: classDay, time: classTime }), // corrected syntax here
+                });
+            }
+          }
+        }
+
+        function showMembers(){
+          var popup = document.getElementById("classList");
+          popup.classList.toggle("show");
         }
              
-              
-
-
-
-        function displayClasses() { //adds classes made to a list, if there are no classes it just gives an error
-          var classList = "";
-          if (upcoming_classes.length === 0) {
-            alert("Sorry, there are no classes! Maybe try creating one.");
+        function editClass(member, classList){
+             if(classList.includes(member)){
+              let index = classList.indexOf(member);
+              classList.splice(index, 1);
+             }
+             else{
+              classList.push(member);
+             }
+               fetch('/editClass', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(classLisr: classList),
+            })
           }
-          else {
-            classList += "<p>Please click on the class for details:</p>";
-            for (var i = 0; i < upcoming_classes.length; i++) {
-              classList += "<button onclick='showClassDetails(\"" + upcoming_classes[i].name + "\", \"" + upcoming_classes[i].time + "\")'>" + upcoming_classes[i].name + "</button><br>";
-            }
-            document.getElementById("Content").innerHTML = classList
-            }
-
-
-
-          }
-          function showClassDetails(className, classTime) {
-            // print class details in ClassDetails div
-            document.getElementById("ClassDetails").innerHTML = "Details for class: " + className + "<br>Time: " + classTime;
-        }
-
+          
+            
 
             // implement js method to get the username and render it in the home page
             fetch('/home', {

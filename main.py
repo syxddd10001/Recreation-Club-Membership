@@ -143,6 +143,10 @@ def signupclass():
             return jsonify({'success':'true'})
         else:
             return jsonify({'error':'true'})
+        
+@app.route('/statements', methods=['GET', 'POST'])
+def statements():
+    return render_template('statements.html')
 
 @app.route('/getstatement', methods=['GET', 'POST'])
 def getstatement():

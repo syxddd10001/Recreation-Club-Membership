@@ -22,5 +22,29 @@
             "date": "04/11/2024",
             "date_due": "12/12/2024"
         }
+    },
+    {
+        "3": {
+            "id": "3",
+            "title": "payment from member1 for class 2",
+            "status": "paid",
+            "user_type": "transactions",
+            "transaction_type": "revenue",
+            "amount": 10,
+            "date": "04/12/2024",
+            "date_due": "04/12/2024"
+        }
+    },
+    {
+        "4": {
+            "id": "4",
+            "title": "payment from bigrick for class 1",
+            "status": "paid",
+            "user_type": "transactions",
+            "transaction_type": "revenue",
+            "amount": 10,
+            "date": "04/12/2024",
+            "date_due": "04/12/2024"
+        }
     }
 ]

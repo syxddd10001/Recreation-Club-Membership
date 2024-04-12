@@ -170,10 +170,10 @@ def members():
         return redirect('login')
     
     global ALL_MEMBERS
-    ALL_MEMBERS = read_users("members").values
+    ALL_MEMBERS = read_users("members").values()
 
     global ALL_CLASSES
-    ALL_CLASSES = read_users("classes").values
+    ALL_CLASSES = read_users("classes").values()
 
     attended = [] # [[], []]
     not_attended = []
@@ -799,8 +799,6 @@ def get_members(c_id) -> list:
 
         Returns a list of Member objects
     """
-    global ALL_MEMBERS 
-
     ALL_MEMBERS = read_users("members")
     classes_data = read_users("classes")
 
@@ -877,15 +875,8 @@ def is_valid_time(time_string):
     match = re.match(regex, time_string)
     return bool(match)
 
-def get_members(c_id) -> list:
-    """get members function
-        Gets a list of all the members
-
-        Returns a list of Member objects
-    """
-    pass
 
 #main function
 if __name__ == "__main__":
-    print(get_members("1"))
-    #app.run(debug=True)
+    #print(get_members("1"))
+    app.run(debug=True)

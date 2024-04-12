@@ -166,7 +166,7 @@ def statements():
 
 @app.route('/members', methods=['GET', 'POST'])
 def members():
-    return render_template('members.html')
+    pass
 
 
 @app.route('/createclass', methods=['POST', 'POST'])
@@ -818,11 +818,6 @@ def is_valid_time(time_string):
     return bool(match)
 
 def get_members(c_id) -> list:
-    """get members function
-        Gets a list of all the members
-
-        Returns a list of Member objects
-    """
     pass
 
 #main function

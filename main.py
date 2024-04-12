@@ -682,10 +682,10 @@ def signup_class_server(user_type):
     update_json_file(user_type, LOGGED_USER.id, "upcoming_classes", LOGGED_USER.upcoming_classes)
 
     for cl in ALL_CLASSES:
-        if class_id == cl.id:
+        if class_id == cl.class_id:
             cl.add_member({"id":LOGGED_USER.id, "username":LOGGED_USER.username, "name":LOGGED_USER.name})
 
-            update_json_file('classes', cl.id, "members", cl.members)
+            update_json_file('classes', cl.class_id, "members", cl.members)
             return True
         
     return False

@@ -169,8 +169,9 @@ def members():
     if not LOGGED_USER:
         return redirect('login')
     
-    ALL_MEMBERS = get_members()
+    members = get_members()
     return render_template('members.html', memberlist = ALL_MEMBERS) ## return list of all members
+
 
 @app.route('/createclass', methods=['POST', 'POST'])
 def createclass():
@@ -775,25 +776,29 @@ def get_members(c_id) -> list:
 
         Returns a list of Member objects
     """
-    members_data = read_users("members")
+    global ALL_MEMBERS 
+
+    ALL_MEMBERS = read_users("members")
     classes_data = read_users("classes")
 
-    # all_members = []
     attended = []
     not_attended = []
 
     class_members = []
+
     for cls in classes_data.values():
         if cls["class_id"] == c_id:
-            class_members = classes_data[c_id]['members']
+            for member in cls["members"]:
+                class_members.append(dict_to_class(ALL_MEMBERS[member["id"]]))
 
-    for member_id, member_info in members_data.items():
+    for member_id, member_info in ALL_MEMBERS.items():
         for c in member_info['finished_classes']:
             if c['class_id'] == c_id:
-                attended.append(member_info)
+                attended.append(dict_to_class(member_info))
+
         for c in member_info['upcoming_classes']:
             if c['class_id'] == c_id:
-                not_attended.append(member_info)
+                not_attended.append(dict_to_class(member_info))
 
     return class_members, attended, not_attended
     

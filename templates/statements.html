@@ -47,6 +47,14 @@
             margin-bottom: 20px;
             width: 30%; /* Adjust the width as needed */
       }
+      #info{
+        border: 1px solid black;
+        border-radius: 10px 30px;
+        padding: 10px;
+        background-color: #e3e3e3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+      }
   </style>
   </head>
 
@@ -63,40 +71,42 @@
         
        <!-- Navigation links -->
        <nav>
+        <a href="/login">Sign Out</a>
         <a href="/statements.html">Statements</a>
         <a href="/members.html"> Club Members</a>
         <a href="/home_treasures.html">Classes</a> 
     </nav>
 
 
-          <div>
-            <h2>Incomes</h2>
+    <div class="classListContainer">
+            <h2>Revenues</h2>
+            {% for revenue in allRevenues %}
+                    <p id="info">{{revenue.date}}, {{revenue.title}}:
+                      <br>
+                       Amount - {{revenue.amount}}, Due Date - {{revenue.date_due}}, Status - {{revenue.status}}</p>
+            {% endfor %}
             <h2>Expenses</h2>
-            <h2>Statements</h2>
-            <h2>Payments</h2>
+            {% for expense in allExpenses %}
+                    <p id="info">{{expense.date}}, {{expense.title}}:
+                      <br>
+                      Amount - {{expense.amount}}, Due Date - {{expense.date_due}}, Status - {{expense.status}}</p>
+            {% endfor %}
           </div>
 
-      <!-- white rectangle container for the list of classes -->
-      <div class="classListContainer">
-        
-        <div id="Content"></div>
-       </div>
-
-
-        
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
-        </div>
-
-        <div id="ClassDetails"> <!-- display class details as message-->
-        </div>
-        
 
 
    <!-- ______________________________________________________________________________________________________-->
 
         <script>
 
-      
+          fetch('/statements', {
+        })
+        .then(response => response.text()){
+          console.log(response);
+        }
+        .catch(error => {
+            console.error('Error:', error);
+        });
             
         </script>
   </body>

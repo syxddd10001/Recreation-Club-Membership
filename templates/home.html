@@ -12,10 +12,6 @@
       #Content {
           margin-top: 20px; /* can adjust number*/
       }
-      /* CSS style -> adds space for list of clubs */
-      #ClassDetails {
-          margin-top: 20px; /* can adjust number*/
-      }
       /* CSS style for the white rectangle */
       .classListContainer {
           background-color: white;
@@ -38,6 +34,13 @@
         text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
         margin-right: 20px; /* Add space between links */
     }
+    #welcomeBlock {
+      background-color: rgb(255, 223, 106);
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      width: 30%; /* Adjust the width as needed */
+}
   </style>
   </head>
 
@@ -47,19 +50,13 @@
     
     <nav>
       <a href="/login">Sign Out</a>
-    </nav>
-    
-    <nav>
       <a href="/payment">Make a Payment</a>
     </nav>
 
 
-    <div align='center'> 
-        <div>
+    <div align='center' > 
+        <div id="welcomeBlock">
           <h1>Recreational Club Membership</h1>
-          <nav>
-            <a href="/payment">Make a Payment</a>
-          </nav>  
           <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
           <h3>This is your member homepage!</h3>
 
@@ -97,17 +94,10 @@
           </p>
           {% endfor %}
        </div>
+    
+      </div>
 
       
-
-        
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
-          
-        </div>
-
-        <div id="ClassDetails"> <!-- display class details as message-->
-        </div>
-        
         
 
    <!-- ______________________________________________________________________________________________________-->

@@ -13,10 +13,6 @@
       #Content {
           margin-top: 20px; /* can adjust number*/
       }
-      /* CSS style -> adds space for list of clubs */
-      #ClassDetails {
-          margin-top: 20px; /* can adjust number*/
-      }
       /* CSS style for the white rectangle */
       .classListContainer {
           background-color: white;
@@ -24,7 +20,7 @@
           border-radius: 10px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
           width: 30%; /* Adjust the width as needed */
-
+          margiin: auto;
       }
 
       nav {
@@ -63,9 +59,10 @@
         
        <!-- Navigation links -->
        <nav>
-        <a href="/statements.html">Statements</a>
-        <a href="/members.html"> Club Members</a>
-        <a href="/home_treasures.html">Classes</a> <!-- should lead to current home treasurer page-->
+        <a href="/login">Sign Out</a>
+        <a href="/statements">Statements</a>
+        <a href="/members"> Club Members</a>
+        <a href="/home_treasures">Classes</a> <!-- should lead to current home treasurer page-->
     </nav>
 
 
@@ -77,25 +74,18 @@
 
 
           <h2>All Upcoming Classes</h2>
-          </div>
 
-      <!-- white rectangle container for the list of classes -->
+
       <div class="classListContainer">
-        
         <div id="Content"></div>
           {% for class in allClasses %}   
           <p>{{class.coach}} - {{class.time}}, {{class.date}}
             <button class="edit" onclick="editClass('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')">Edit Details</button>
           </p>
           {% endfor %}
-
-
-        
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
         </div>
-
-        <div id="ClassDetails"> <!-- display class details as message-->
-        </div>
+     
+      </div>
         
 
 

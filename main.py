@@ -877,6 +877,14 @@ def is_valid_time(time_string):
     match = re.match(regex, time_string)
     return bool(match)
 
+def get_members(c_id) -> list:
+    """get members function
+        Gets a list of all the members
+
+        Returns a list of Member objects
+    """
+    pass
+
 #main function
 if __name__ == "__main__":
     print(get_members("1"))

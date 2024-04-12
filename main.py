@@ -159,7 +159,11 @@ def statements():
 
 @app.route('/members', methods=['GET', 'POST'])
 def members():
-    return render_template('members.html') ## return list of all members
+    if not LOGGED_USER:
+        return redirect('login')
+    
+    ALL_MEMBERS = get_members()
+    return render_template('members.html', memberlist = ALL_MEMBERS) ## return list of all members
 
 """Server methods"""
 
@@ -725,15 +729,45 @@ def get_accounts_payables(transaction_type, status) -> list:
     pass
     
 
-def get_members() -> list:
+def get_members(c_id) -> list:
     """get members function
         Gets a list of all the members
 
         Returns a list of Member objects
     """
+    members_data = read_users("members")
+    classes_data = read_users("classes")
+
+    # all_members = []
+    attended = []
+    not_attended = []
+
+    class_members = []
+    for cls in classes_data.values():
+        if cls["class_id"] == c_id:
+            class_members = classes_data[c_id]['members']
+
+    for member_id, member_info in members_data.items():
+        for c in member_info['finished_classes']:
+            if c['class_id'] == c_id:
+                attended.append(member_info)
+        for c in member_info['upcoming_classes']:
+            if c['class_id'] == c_id:
+                not_attended.append(member_info)
+
+    return class_members, attended, not_attended
     
-    pass
+    """
+    members = []
+    all_members = read_users("members")
+    
+    for member in all_members.values():
+        members.append(dict_to_class(member))
+
+    return members 
+    """
 
 #main function
 if __name__ == "__main__":
-    app.run(debug=True)
+    print(get_members("1"))
+    #app.run(debug=True)

@@ -153,10 +153,6 @@ def signupclass():
         
 @app.route('/statements', methods=['GET', 'POST'])
 def statements():
-    return render_template('statements.html')
-
-@app.route('/getstatement', methods=['GET', 'POST'])
-def getstatement():
     if not LOGGED_USER:
         return redirect('login')
     
@@ -167,6 +163,10 @@ def getstatement():
     revenues = get_transactions("revenue")
     expenses = get_transactions("expense")
     return render_template('statements.html', allRevenues=revenues, allExpenses=expenses)
+
+@app.route('/members', methods=['GET', 'POST'])
+def members():
+    return render_template('members.html') ## return list of all members
 
 @app.route('/createclass', methods=['POST', 'POST'])
 def createclass():

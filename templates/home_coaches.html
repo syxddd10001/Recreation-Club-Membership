@@ -22,7 +22,24 @@
         width: 30%; /* Adjust the width as needed */
         text-align:left;
         padding-left: 20px
-
+    }
+    #welcomeBlock {
+      background-color: rgb(255, 223, 106);
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      width: 30%; /* Adjust the width as needed */
+}
+nav {
+        background-color: #333333; /* background color */
+        color: white; /* Text color */
+        padding: 15px; /* padding around links */
+        text-align: center; /* center align */
+    }
+    nav a {
+        color: white; /* Link text color */
+        text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
+        margin-right: 20px; /* Add space between links */
     }
   </style>
   </head>
@@ -30,8 +47,13 @@
      <!-- ______________________________________________________________________________________________________-->
 
   <body style="background: rgb(199, 233, 243);">
-    <div align='center'> 
-        <div>
+
+  <nav>
+      <a href="/login">Sign Out</a>
+    </nav>
+
+    <div align='center' > 
+        <div id="welcomeBlock">
           <h1>Recreational Club Membership</h1>
           <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
           <h3>This is your coach homepage!<h3>

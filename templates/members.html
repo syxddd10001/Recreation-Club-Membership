@@ -57,46 +57,44 @@
         <div>
           <h1>Recreational Club Membership</h1>
 
-
-
         </div>
         
        <!-- Navigation links -->
        <nav>
+        <a href="/login">Sign Out</a>
         <a href="/statements.html">Statements</a>
         <a href="/members.html"> Club Members</a>
         <a href="/home_treasures.html">Classes</a> 
     </nav>
 
-
+    <div class="classListContainer">
           <div>
             <h2>All Members</h2>
             <h2>Member Logs</h2>
             <h2>Member Frequency</h2>
           </div>
 
-      <!-- white rectangle container for the list of classes -->
-      <div class="classListContainer">
-        
-        <div id="Content"></div>
-       </div>
-
+        </div>
+   
+      </div>
 
         
-        <div id="Content"> <!-- shows that we created a class, shows classes made-->
-        </div>
-
-        <div id="ClassDetails"> <!-- display class details as message-->
-        </div>
         
 
 
    <!-- ______________________________________________________________________________________________________-->
 
         <script>
-        var classes = []; // store created classes
 
-      
+
+          fetch('/getmembers', {
+          })
+          .then(response => response.text()){
+            console.log(response);
+          }
+          .catch(error => {
+              console.error('Error:', error);
+          });
             
         </script>
   </body>

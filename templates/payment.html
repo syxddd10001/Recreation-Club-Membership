@@ -78,6 +78,17 @@
     .payNow{
         float: right
       }
+      nav {
+        background-color: #333333; /* background color */
+        color: white; /* Text color */
+        padding: 15px; /* padding around links */
+        text-align: center; /* center align */
+    }
+    nav a {
+        color: white; /* Link text color */
+        text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
+        margin-right: 20px; /* Add space between links */
+    }
   </style>
   </head>
 
@@ -145,7 +156,10 @@
                  <!-- onclick attribute -->
             </div>
         <h2>Paid Classes</h2>
-        
+        {% for class in paidClasses %}
+                    <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
+
+        {% endfor %}
         <div id="Content"></div>
        </div>
 

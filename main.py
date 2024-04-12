@@ -166,7 +166,8 @@ def statements():
 
 @app.route('/members', methods=['GET', 'POST'])
 def members():
-    return render_template('members.html') ## return list of all members
+    return render_template('members.html')
+
 
 @app.route('/createclass', methods=['POST', 'POST'])
 def createclass():
@@ -815,6 +816,14 @@ def is_valid_time(time_string):
     regex = r"^([01][0-9]|2[0-3])[0-5][0-9]$" 
     match = re.match(regex, time_string)
     return bool(match)
+
+def get_members(c_id) -> list:
+    """get members function
+        Gets a list of all the members
+
+        Returns a list of Member objects
+    """
+    pass
 
 #main function
 if __name__ == "__main__":

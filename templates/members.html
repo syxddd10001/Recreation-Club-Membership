@@ -70,7 +70,32 @@
     <div class="classListContainer">
           <div>
             <h2>All Members</h2>
+
+            {% for member in allMembers %}
+              <div>
+                <p> {{member.id}} - {{member.username}} - {{member.name}}</p>
+              </div>
+            {% endfor %}
             <h2>Member Logs</h2>
+            {% for class in allClasses %}
+              <div>
+              <div style="width: max-content; height: auto; border: 3px solid black; padding: 15px; margin: 20px auto;">
+
+                <p> {{class.class_id}} - {{class.coach}} on {{class.date}} at {{class.time}}</p>
+                <h3>Not Attended</h3>
+                {% for x in notAttendedClasses[(class.class_id | int) - 1] %}
+                  <p>{{x.username}}</p>
+                {% endfor %}
+
+                <h3>Attended</h3>
+                {% for x in attendedClasses[(class.class_id | int) - 1] %}
+                  <p>{{x.username}}</p>
+                {% endfor %}
+
+              </div>
+            </div>
+            {% endfor %}
+
             <h2>Member Frequency</h2>
           </div>
 
@@ -86,16 +111,6 @@
 
         <script>
 
-
-          fetch('/getmembers', {
-          })
-          .then(response => response.text()){
-            console.log(response);
-          }
-          .catch(error => {
-              console.error('Error:', error);
-          });
-            
         </script>
   </body>
   

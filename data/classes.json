@@ -9,5 +9,16 @@
             "user_type": "classes",
             "members": []
         }
+    },
+    {
+        "2": {
+            "class_id": "2",
+            "admin": "coach1",
+            "coach": "coach1",
+            "date": "12/12/2024",
+            "time": 1246,
+            "user_type": "classes",
+            "members": []
+        }
     }
 ]

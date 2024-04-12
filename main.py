@@ -80,9 +80,9 @@ def home():
 
             if u_type == 'members':
                 upcoming_classes = classes_signed_up_for(LOGGED_USER.upcoming_classes)
-                print(upcoming_classes)
+
                 all_classes=set(ALL_CLASSES)-set(upcoming_classes)
-                print(all_classes)
+
                 return render_template('home.html', userInfo=LOGGED_USER, allClasses=all_classes, upcomingClasses=upcoming_classes) #return all classes as well
             
             elif u_type == 'treasurers':
@@ -789,9 +789,9 @@ def create_class_server()->bool:
     if user_type == 'coaches':
         write_classes(admin=username, members=[], coach=username, date=date, time=int(time))
         update_all()
-        print(LOGGED_USER.add_upcoming_class({"class_id":len(ALL_CLASSES), "payment_status":"unpaid"}))
+
         update_json_file(user_type, LOGGED_USER.id, "upcoming_classes", LOGGED_USER.upcoming_classes)
-        print(LOGGED_USER.upcoming_classes)
+
         write_transactions(title=f"payment to coach {LOGGED_USER.username} for class {len(ALL_CLASSES)}",
                            status="unpaid", 
                            transaction_type="expense",

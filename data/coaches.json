@@ -11,6 +11,10 @@
                 {
                     "class_id": 1,
                     "payment_status": "unpaid"
+                },
+                {
+                    "class_id": 2,
+                    "payment_status": "unpaid"
                 }
             ]
         }

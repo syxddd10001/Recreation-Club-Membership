@@ -169,8 +169,24 @@ def members():
     if not LOGGED_USER:
         return redirect('login')
     
-    members = get_members()
-    return render_template('members.html', memberlist = ALL_MEMBERS) ## return list of all members
+    global ALL_MEMBERS
+    ALL_MEMBERS = read_users("members").values
+
+    global ALL_CLASSES
+    ALL_CLASSES = read_users("classes").values
+
+    attended = [] # [[], []]
+    not_attended = []
+    for c in ALL_CLASSES:
+        x = get_members(c["class_id"])
+        attended.append(x[1])
+        not_attended.append(x[2])
+
+    return render_template('members.html',
+                           allMembers=ALL_MEMBERS,
+                           allClasses=ALL_CLASSES,
+                           attendedClasses=attended,
+                           notAttendedClasses=not_attended) ## return list of all members
 
 
 @app.route('/createclass', methods=['POST', 'POST'])
@@ -757,7 +773,14 @@ def get_unpaid_expenses(transaction_type, status) -> list:
 
         Returns a list of unpaid Transaction objects sorted by date
     """
-    pass
+    unpaid_transactions = []
+    data = read_users("transactions")
+
+    for ut in data.values():
+        if ut["transaction_type"] == transaction_type and ut["status"] == "unpaid":
+            unpaid_transactions.append(dict_to_class(ut))
+    
+    return unpaid_transactions
 
 def get_accounts_payables(transaction_type, status) -> list:
     """get expenses function

@@ -1,0 +1,114 @@
+<!DOCTYPE html> <!-- document type and version of HTML -->
+<html lang="en"> <!-- english -->
+  <head>
+    <title>Class Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
+
+    <style>
+        body {
+            background: rgb(199, 233, 243);
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            overflow: auto;
+            height: 50vh;
+            padding: 0 10%;
+        }
+        .member, .message {
+            border-bottom: 1px solid grey;
+            padding: 10px;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .message-form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .message-form textarea {
+            resize: none;
+            height: 100px;
+        }
+    </style>
+  </head>
+
+     <!-- ______________________________________________________________________________________________________-->
+
+     <body>
+        <a href="/home" class="back-button">Back</a>
+        <div align='center'> 
+            <h1>{{ Class.id }}</h1>
+            <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
+            <h3>Date: {{ Class.date }} | Time: {{ Class.time }}</h3>
+            <p>Admin: {{ Class.admin }} | Coach: {{ Class.coach }}</p>
+    
+            <div class="container">
+                <div>
+                    <h3>Members:</h3>
+                    {% for member in Class.get_members() %}
+                        <div class="member">
+                            <h4>{{ member.username }}</h4>
+                            <p>Name: {{ member.name }} | ID: {{ member.id }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+    
+                <div>
+                    <h3>Messages:</h3>
+                    <form onSubmit="send()" action="/class.html" method="POST">
+                        <div class="message-form">
+                            <input type="hidden" id="class_id" name="class_id" value="{{ Class.id }}">
+                            <input type="hidden" id="username" name="username" value="{{ userInfo.username }}">
+                            <textarea id="message" name="message" placeholder="Type your message here:"></textarea>
+                            <button type="submit">Send</button>
+                        </div>
+                    </form>                    
+                    {% for message in Class.get_messages() %}
+                        <div class="message">
+                            <h4>{{ message[0] }}</h4>
+                            <p>{{ message[1] }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function send() {
+                event.preventDefault();
+
+                let class_id = document.getElementById("class_id").value;
+                let name = document.getElementById("username").value;
+                let message = document.getElementById("message").value;
+
+
+                fetch('/class.html', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name, message: message, class_id: class_id }),
+                })
+                .then(response => {
+                    console.log("Response received:", response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+        </script>
+        
+    </body>
+  
+</html>

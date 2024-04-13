@@ -96,21 +96,28 @@ class Treasurer(User):
         # ?? storing expenses and revenues locally on treasureres' account might be redundant since they are universal
 
 class Classes:
-    def __init__(self, class_id, admin, coach, date, time, members=None, user_type="classes"):
-        self.class_id = class_id
+    def __init__(self, id, admin, coach, date, time, members=None, user_type="classes", messages=None):
+        self.id = id
         self.admin = admin
         self.coach = coach
         self.date = date
         self.time = time
         self.user_type = user_type
         self.members = members or []
+        self.messages = messages or []
     
     def add_member(self, member):
         self.members.append(member)
     
     def get_members(self):
         return self.members
+    
+    def add_message(self, message):
+        self.messages.append(message)
 
+    def get_messages(self):
+        return self.messages
+    
     def to_json(self):
         return json.dumps(self.__dict__)  
 

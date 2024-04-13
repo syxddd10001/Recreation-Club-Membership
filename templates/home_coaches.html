@@ -64,7 +64,7 @@ nav {
         <h2>Your Upcoming Classes</h2>
         <div class="classListContainer">
           {% for class in upcomingClasses %}
-          <p>class {{class.class_id}} - {{class.time}}, {{class.date}}</p>
+          <p>class {{class.id}} - {{class.time}}, {{class.date}}</p>
             <button onclick="showMembers()" style="float: right">Edit Class</button>
             <div class="classListContainer" id="classList">
               {% for member in allMembers%}
@@ -91,7 +91,7 @@ nav {
       <div class="classListContainer">
         <div id="Content"></div>
         {% for class in allClasses %}   
-        <p>class: {{class.class_id}} {{class.coach}} - {{class.time}}, {{class.date}}
+        <p>class: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}
         </p>
         {% endfor %}
 

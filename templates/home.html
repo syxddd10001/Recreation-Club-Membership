@@ -68,8 +68,9 @@
           <h2>Your Upcoming Classes</h2>
           {% for class in upcomingClasses %}
             <div>
-              <h3> {{class.name}} </h3>
-              <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+              <p>{{class.coach}} - {{class.time}}, {{class.date}}
+                <button onclick="window.location.href = '/class.html?id={{class.id}}&user_id={{userInfo.id}}&user_type={{userInfo.type}}';" >Go to Class</button>
+              </p>
               
             </div>
           {% endfor %}
@@ -90,7 +91,7 @@
         <div id="Content"></div>
           {% for class in allClasses %}   
           <p>{{class.coach}} - {{class.time}}, {{class.date}}
-            <button onclick="signUp('{{class.class_id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')" style="float: right">Sign Up For Class</button>
+            <button onclick="signUp('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')" style="float: right">Sign Up For Class</button>
           </p>
           {% endfor %}
        </div>

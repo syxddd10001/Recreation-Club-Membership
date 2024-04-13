@@ -1,36 +1,66 @@
 [
     {
         "1": {
-            "class_id": "1",
-            "admin": "coach1",
-            "coach": "coach1",
-            "date": "03/26/2024",
-            "time": 1212,
+            "id": "1",
+            "admin": "admin_username",
             "user_type": "classes",
             "members": [
                 {
-                    "id": "2",
-                    "username": "bigrick",
-                    "name": "Rick Ross"
+                    "id": "4",
+                    "username": "admin",
+                    "name": "admin"
+                },
+                {
+                    "id": "1",
+                    "username": "member1",
+                    "name": "Bob Smith"
+                },
+                {
+                    "id": "6",
+                    "username": "123",
+                    "name": "123"
                 }
+            ],
+            "coach": "coach1",
+            "date": "03/26/2024",
+            "time": 1400,
+            "messages": [
+                [
+                    "member1",
+                    "Hey there"
+                ],
+                [
+                    "member1",
+                    "Hi"
+                ],
+                [
+                    "123",
+                    "hi"
+                ]
             ]
         }
     },
     {
         "2": {
-            "class_id": "2",
-            "admin": "coach1",
-            "coach": "coach1",
-            "date": "12/12/2024",
-            "time": 1246,
+            "id": "2",
+            "admin": "admin_username",
             "user_type": "classes",
             "members": [
+                {
+                    "id": "4",
+                    "username": "admin",
+                    "name": "admin"
+                },
                 {
                     "id": "1",
                     "username": "member1",
                     "name": "Bob Smith"
                 }
-            ]
+            ],
+            "coach": "coach2",
+            "date": "03/29/2024",
+            "time": 1400,
+            "messages": []
         }
     }
 ]

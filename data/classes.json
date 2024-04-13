@@ -14,12 +14,30 @@
                     "id": "1",
                     "username": "member1",
                     "name": "Bob Smith"
+                },
+                {
+                    "id": "6",
+                    "username": "123",
+                    "name": "123"
                 }
             ],
             "coach": "coach1",
             "date": "03/26/2024",
             "time": 1400,
-            "messages": []
+            "messages": [
+                [
+                    "member1",
+                    "Hey there"
+                ],
+                [
+                    "member1",
+                    "Hi"
+                ],
+                [
+                    "123",
+                    "hi"
+                ]
+            ]
         }
     },
     {

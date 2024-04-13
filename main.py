@@ -157,18 +157,24 @@ def signupclass():
 #def signupclass():
 #    return True
 
-@app.route('/class.html')
+@app.route('/class.html', methods=['GET', 'POST'])
 def class_page():
     update_user_data('members')
     update_user_data('coaches')
     update_user_data('treasurers')
     class_id = request.args.get('id')
     specific_class = get_class_by_id(class_id)    
-    user = LOGGED_USER
+    user_id = request.args.get('user_id')
+    #user_type = request.args.get('user_type')
+    user = find_user(user_id, 'members')
     if request.method == 'POST':
-        username = request.form.get('username')
-        message = request.form.get('message')
+        data = request.get_json()
+        username = data.get('name')
+        message = data.get('message')
+        class_id = data.get('class_id')
+        specific_class = get_class_by_id(class_id)    
         specific_class.add_message((username, message))
+        update_json_file('classes', class_id, 'messages', (username, message), True)
     return render_template('class.html', Class=specific_class, userInfo=user)
 
 @app.route('/statements', methods=['GET', 'POST'])
@@ -198,7 +204,7 @@ def members():
     attended = [] # [[], []]
     not_attended = []
     for c in ALL_CLASSES:
-        x = get_members(c["class_id"])
+        x = get_members(c["id"])
         attended.append(x[1])
         not_attended.append(x[2])
 
@@ -448,7 +454,7 @@ def write_classes(admin, members, coach, date, time, utype='classes') -> bool:
     obj = None
     new_id = (str(len(userdata) + 1)) 
     if utype == 'classes':
-        obj = Classes(class_id=new_id,
+        obj = Classes(id=new_id,
                     admin=admin,
                     members=members,
                     coach=coach,
@@ -466,13 +472,14 @@ def write_classes(admin, members, coach, date, time, utype='classes') -> bool:
     
     return True
 
-def find_user(user_id: str) -> User:
+def find_user(user_id: str, type: any) -> User:
     """ Find a user object
         Arguments: user_id (string)
 
         Returns user if found
         Returns None if not
     """
+    type = "members" # temporary
     file_data = None
     file_path = os.path.join("data", type+'.json')
     try:
@@ -487,7 +494,7 @@ def find_user(user_id: str) -> User:
         for item in file_data:
             user_data = list(item.values())[0] 
             if 'id' in user_data and user_data['id'] == user_id:
-                return User(**user_data)
+                return Member(**user_data)
 
     return None
 
@@ -654,7 +661,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | Transact
 
     return return_user
 
-def update_json_file(file: str, update_id :any, update_field :any, update_value: any):
+def update_json_file(file: str, update_id :any, update_field :any, update_value: any, addTo=False):
     """update_json_file method
         Updates json fields with the values provided
         
@@ -672,8 +679,11 @@ def update_json_file(file: str, update_id :any, update_field :any, update_value:
     
     for item in data:
         if (item.get(update_id)):
-
-            item[update_id][update_field]=update_value
+            
+            if addTo:
+                item[update_id][update_field].append(update_value)
+            else:
+                item[update_id][update_field]=update_value
             success = True
             break
     
@@ -775,7 +785,7 @@ def classes_signed_up_for(target_list):
     for class_in_all in ALL_CLASSES:
 
         for class_in_target in target_list:
-            if str(class_in_all.class_id) == str(class_in_target['class_id']):
+            if str(class_in_all.id) == str(list(class_in_target.values())[0]):
                 common_classes.append(class_in_all)
     
     return common_classes # common_classes would be [{CLASSES Data type 1} ... {CLASSES Data type n}]
@@ -788,10 +798,10 @@ def signup_class_server(user_type):
     update_json_file(user_type, LOGGED_USER.id, "upcoming_classes", LOGGED_USER.upcoming_classes)
 
     for cl in ALL_CLASSES:
-        if class_id == cl.class_id:
+        if class_id == cl.id:
             cl.add_member({"id":LOGGED_USER.id, "username":LOGGED_USER.username, "name":LOGGED_USER.name})
 
-            update_json_file('classes', cl.class_id, "members", cl.members)
+            update_json_file('classes', cl.id, "members", cl.members)
             return True
         
     return False
@@ -893,17 +903,17 @@ def get_members(c_id) -> list:
     class_members = []
 
     for cls in classes_data.values():
-        if cls["class_id"] == c_id:
+        if cls["id"] == c_id:
             for member in cls["members"]:
                 class_members.append(dict_to_class(ALL_MEMBERS[member["id"]]))
 
-    for member_id, member_info in ALL_MEMBERS.items():
+    for id, member_info in ALL_MEMBERS.items():
         for c in member_info['finished_classes']:
-            if c['class_id'] == c_id:
+            if c['id'] == c_id:
                 attended.append(dict_to_class(member_info))
 
         for c in member_info['upcoming_classes']:
-            if c['class_id'] == c_id:
+            if c['id'] == c_id:
                 not_attended.append(dict_to_class(member_info))
 
     return class_members, attended, not_attended

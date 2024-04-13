@@ -61,22 +61,53 @@
     
                 <div>
                     <h3>Messages:</h3>
-                    {% for message in Class.get_messages() %}
-                        <div class="message">
-                            <h4>{{ message.sender }}</h4>
-                            <p>{{ message.content }}</p>
-                        </div>
-                    {% endfor %}
-                    <form method="POST" action="/class.html"></form>
+                    <form onSubmit="send()" action="/class.html" method="POST">
                         <div class="message-form">
+                            <input type="hidden" id="class_id" name="class_id" value="{{ Class.id }}">
                             <input type="hidden" id="username" name="username" value="{{ userInfo.username }}">
                             <textarea id="message" name="message" placeholder="Type your message here:"></textarea>
                             <button type="submit">Send</button>
                         </div>
-                    </form>
+                    </form>                    
+                    {% for message in Class.get_messages() %}
+                        <div class="message">
+                            <h4>{{ message[0] }}</h4>
+                            <p>{{ message[1] }}</p>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+        <script>
+            function send() {
+                event.preventDefault();
+
+                let class_id = document.getElementById("class_id").value;
+                let name = document.getElementById("username").value;
+                let message = document.getElementById("message").value;
+
+
+                fetch('/class.html', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name, message: message, class_id: class_id }),
+                })
+                .then(response => {
+                    console.log("Response received:", response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+        </script>
         
     </body>
   

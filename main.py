@@ -56,6 +56,8 @@ def home():
         return redirect('/login')
     
     update_user_data('members')
+    update_user_data('coaches')
+    update_user_data('treasurers')
     
     if(request.method == 'GET' or request.method == 'POST'):
         if LOGGED_USER:
@@ -132,6 +134,25 @@ def signupclass():
             return jsonify({'success':'true'})
         else:
             return jsonify({'error':'true'})
+        
+#@app.route('/get_class', methods=['GET', 'POST'])
+#def signupclass():
+#    return True
+
+@app.route('/class.html')
+def class_page():
+    update_user_data('members')
+    update_user_data('coaches')
+    update_user_data('treasurers')
+    class_id = request.args.get('id')
+    specific_class = get_class_by_id(class_id)    
+    user = LOGGED_USER
+    if request.method == 'POST':
+        username = request.form.get('username')
+        message = request.form.get('message')
+        specific_class.add_message((username, message))
+    return render_template('class.html', Class=specific_class, userInfo=user)
+
 
 """Server methods"""
 
@@ -221,6 +242,19 @@ def check_user(username: str, password: str, user_type: str) -> bool:
             return True
         
     return False
+
+def get_class_by_id(class_id):
+    """Find class method
+        Checks if a class is linked to specific class_id in classes.json               
+        
+        Arguments: class_id (string)
+
+        Returns the class if found
+        Returns False otherwise
+    """
+    return read_classes(class_id) # Why does this function exist haha
+
+
 
 def update_user_data(user_type):
     """Update user data method
@@ -334,6 +368,32 @@ def write_classes(admin, members, coach, date, time, utype='classes'):
     
     return True
 
+def find_user(user_id: str) -> User:
+    """ Find a user object
+        Arguments: user_id (string)
+
+        Returns user if found
+        Returns None if not
+    """
+    file_data = None
+    file_path = os.path.join("data", type+'.json')
+    try:
+        with open(file_path, 'r') as file:
+            file_data = json.load(file)
+
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"No such file: {0}.json".format(type))
+        return None
+    
+    if file_data is not None:
+        for item in file_data:
+            user_data = list(item.values())[0] 
+            if 'id' in user_data and user_data['id'] == user_id:
+                return User(**user_data)
+
+    return None
+
+
 def read_users(type :str) -> User: 
     """Read user data
         Reads user data from ./data/*.json files                 
@@ -364,6 +424,32 @@ def read_users(type :str) -> User:
             result_dict.update(item)
 
     return result_dict
+
+def read_classes(class_id: str) -> Classes:
+    """Read class data
+        Arguments: class_id (string)
+
+        Returns class if found
+        Returns None if not
+    """
+    file_data = None
+    file_path = os.path.join("data", 'classes.json')
+    try:
+        with open(file_path, 'r') as file:
+            file_data = json.load(file)
+
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"No such file: classes.json")
+        return None
+
+    if file_data is not None:
+        for item in file_data:
+            class_data = list(item.values())[0]  # Get the class details dictionary
+            if 'id' in class_data and class_data['id'] == class_id:
+                return Classes(**class_data)
+
+    return None
+
 
 def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
     """Dict to User Class 
@@ -404,7 +490,7 @@ def dict_to_class(user :dict) -> Member | Coach | Treasurer | Classes | None:
                       upcoming_classes=user["upcoming_classes"])
 
     elif u_type == "classes":    
-        return_user = Classes(id=user["class_id"],
+        return_user = Classes(id=user["id"],
                               admin=user["admin"],
                               members=user["members"],
                               coach=user["coach"],

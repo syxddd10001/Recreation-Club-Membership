@@ -93,7 +93,7 @@ class Treasurer(User):
         super().__init__(id, username, name, password, user_type)
 
 class Classes:
-    def __init__(self, id, admin, coach, date, time, members=None, user_type="classes"):
+    def __init__(self, id, admin, coach, date, time, members=None, user_type="classes", messages=None):
         self.id = id
         self.admin = admin
         self.coach = coach
@@ -101,12 +101,19 @@ class Classes:
         self.time = time
         self.user_type = user_type
         self.members = members or []
+        self.messages = messages or []
     
     def add_member(self, member):
         self.members.append(member)
     
     def get_members(self):
         return self.members
+    
+    def add_message(self, message):
+        self.messages.append(message)
+
+    def get_messages(self):
+        return self.messages
     
     def to_json(self):
         return json.dumps(self.__dict__)  

@@ -59,8 +59,9 @@
           <h2>Your Upcoming Classes</h2>
           {% for class in upcomingClasses %}
             <div>
-              <h3> {{class.name}} </h3>
-              <p>{{class.coach}} - {{class.time}}, {{class.date}}</p>
+              <p>{{class.coach}} - {{class.time}}, {{class.date}}
+                <button onclick="window.location.href = '/class.html?id={{class.id}}&user_id={{userInfo.id}}';" >Go to Class</button>
+              </p>
               
             </div>
           {% endfor %}

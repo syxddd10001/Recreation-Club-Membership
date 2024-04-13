@@ -62,5 +62,28 @@
             "time": 1400,
             "messages": []
         }
+    },
+    {
+        "3": {
+            "id": "3",
+            "admin": "111",
+            "coach": "111",
+            "date": "04/12/2024",
+            "time": 1400,
+            "user_type": "classes",
+            "members": [
+                {
+                    "id": "7",
+                    "username": "222",
+                    "name": "222"
+                }
+            ],
+            "messages": [
+                [
+                    "222",
+                    "Hello!"
+                ]
+            ]
+        }
     }
 ]

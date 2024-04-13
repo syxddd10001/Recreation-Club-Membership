@@ -1,117 +1,117 @@
-<!DOCTYPE html> <!-- document type and version of HTML -->
-<html lang="en"> <!-- english -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<!-- document type and version of HTML -->
+<html lang="en">
+  <!-- english -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <head>
     <title>Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/basic.css') }}">
-
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='stylesheets/basic.css') }}"
+    />
 
     <!-- ______________________________________________________________________________________________________-->
 
     <style>
       /* CSS style -> adds space between buttons and content */
       #Content {
-          margin-top: 20px; /* can adjust number*/
+        margin-top: 20px; /* can adjust number*/
       }
       /* CSS style -> adds space for list of clubs */
       #ClassDetails {
-          margin-top: 20px; /* can adjust number*/
+        margin-top: 20px; /* can adjust number*/
       }
       /* CSS style for the white rectangle */
       .classListContainer {
-          background-color: white;
-          padding: 50px;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
-          width: 30%; /* Adjust the width as needed */
-
+        background-color: white;
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
+        width: 30%; /* Adjust the width as needed */
       }
 
       nav {
-            background-color: #333333; /* background color */
-            color: white; /* Text color */
-            padding: 15px; /* padding around links */
-            text-align: center; /* center align */
-        }
-        nav a {
-            color: white; /* Link text color */
-            text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
-            margin-right: 20px; /* Add space between links */
-        }
-
-              /* CSS style for the yellow block */
-      #welcomeBlock {
-            background-color: rgb(255, 223, 106);
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            width: 30%; /* Adjust the width as needed */
+        background-color: #333333; /* background color */
+        color: white; /* Text color */
+        padding: 15px; /* padding around links */
+        text-align: center; /* center align */
       }
-  </style>
+      nav a {
+        color: white; /* Link text color */
+        text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
+        margin-right: 20px; /* Add space between links */
+      }
+
+      /* CSS style for the yellow block */
+      #welcomeBlock {
+        background-color: rgb(255, 223, 106);
+        padding: 20px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        width: 30%; /* Adjust the width as needed */
+      }
+    </style>
   </head>
 
-     <!-- ______________________________________________________________________________________________________-->
+  <!-- ______________________________________________________________________________________________________-->
 
-  <body style="background: rgb(199, 233, 243);">
-    <div align='center'> 
-        <div>
-          <h1>Recreational Club Membership</h1>
+  <body style="background: rgb(199, 233, 243)">
+    <div align="center">
+      <div>
+        <h1>Recreational Club Membership</h1>
+      </div>
 
-        </div>
-        
-       <!-- Navigation links -->
-       <nav>
+      <!-- Navigation links -->
+      <nav>
         <a href="/login">Sign Out</a>
         <a href="/statements.html">Statements</a>
         <a href="/members.html"> Club Members</a>
-        <a href="/home_treasures.html">Classes</a> 
-    </nav>
+        <a href="/home_treasures.html">Classes</a>
+      </nav>
 
-    <div class="classListContainer">
+      <div class="classListContainer">
+        <div>
+          <h2>All Members</h2>
+
+          {% for member in allMembers %}
           <div>
-            <h2>All Members</h2>
-
-            {% for member in allMembers %}
-              <div>
-                <p> {{member.id}} - {{member.username}} - {{member.name}}</p>
-              </div>
-            {% endfor %}
-            <h2>Member Logs</h2>
-            {% for class in allClasses %}
-              <div>
-              <div style="width: max-content; height: auto; border: 3px solid black; padding: 15px; margin: 20px auto;">
-
-                <p> {{class.class_id}} - {{class.coach}} on {{class.date}} at {{class.time}}</p>
-                <h3>Not Attended</h3>
-                {% for x in notAttendedClasses[(class.class_id | int) - 1] %}
-                  <p>{{x.username}}</p>
-                {% endfor %}
-
-                <h3>Attended</h3>
-                {% for x in attendedClasses[(class.class_id | int) - 1] %}
-                  <p>{{x.username}}</p>
-                {% endfor %}
-
-              </div>
-            </div>
-            {% endfor %}
-
-            
+            <p>{{member.id}} - {{member.username}} - {{member.name}}</p>
           </div>
+          {% endfor %}
+          <h2>Member Logs</h2>
+          {% for class in allClasses %}
+          <div>
+            <div
+              style="
+                width: max-content;
+                height: auto;
+                border: 3px solid black;
+                padding: 15px;
+                margin: 20px auto;
+              "
+            >
+              <p>
+                {{class.id}} - {{class.coach}} on {{class.date}} at
+                {{class.time}}
+              </p>
+              <h3>Not Attended</h3>
+              {% for x in notAttendedClasses[(class.id | int) - 1] %}
+              <p>{{x.username}}</p>
+              {% endfor %}
 
+              <h3>Attended</h3>
+              {% for x in attendedClasses[(class.id | int) - 1] %}
+              <p>{{x.username}}</p>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
         </div>
-   
       </div>
+    </div>
 
-        
-        
+    <!-- ______________________________________________________________________________________________________-->
 
-
-   <!-- ______________________________________________________________________________________________________-->
-
-        <script>
-
-        </script>
+    <script></script>
   </body>
-  
 </html>

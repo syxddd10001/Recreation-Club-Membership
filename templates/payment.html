@@ -114,7 +114,7 @@
                 <select name="class" id="class" required>
                     <option value="">--Select a class</option> //when user first visits it will not be stored in server
                     {% for class in unpaidClasses %}
-                        <option value={{class.class_id}}> class id: {{class.class_id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
+                        <option value={{class.id}}> class id: {{class.id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
                     {% endfor %}
                 </select>
             </div>
@@ -150,14 +150,14 @@
             <div>
                 <h2>Unpaid Classes</h2>
                 {% for class in unpaidClasses %}
-                    <p>id: {{class.class_id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
+                    <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
                <!-- <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button> -->
                 {% endfor %}
                  <!-- onclick attribute -->
             </div>
         <h2>Paid Classes</h2>
         {% for class in paidClasses %}
-                    <p>id: {{class.class_id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
+                    <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
 
         {% endfor %}
         <div id="Content"></div>

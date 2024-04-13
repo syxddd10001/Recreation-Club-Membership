@@ -423,7 +423,7 @@ def write_users(uName :str, FLname :str, passw :str, utype :str, finished_classe
                           username=uName,
                           name=FLname,
                           password=passw,
-                          usertype=utype,
+                          user_type=utype,
                           ) 
 
     
@@ -913,7 +913,7 @@ def get_members(c_id) -> list:
                 attended.append(dict_to_class(member_info))
 
         for c in member_info['upcoming_classes']:
-            if c['id'] == c_id:
+            if c['class_id'] == c_id:
                 not_attended.append(dict_to_class(member_info))
 
     return class_members, attended, not_attended

@@ -1,12 +1,20 @@
 [
     {
         "1": {
-            "id" : "1",
+            "id": "1",
             "username": "admin1",
             "name": "James Drinkwater",
             "password": "scrypt:32768:8:1$2UNLsJou8Ud2nW92$14d7e059f670f6113cc60c177178aa06a944d3d771d4c05bd19fccc8a0f7185d9ffca7977c739af3635f6f344fa28086a6c40ac0584c2b4ef97442615eb12580",
             "user_type": "treasurers"
         }
-    
+    },
+    {
+        "2": {
+            "id": "2",
+            "username": "333",
+            "name": "333",
+            "password": "scrypt:32768:8:1$6d9gfQM62Ul7rJE5$c0b6326e30fe0bbb6edb7fad19c7a12dbc71e113b168480f0183fb91b56ef1e6b43f8754d18e752c943d7e02b24c5a5a5247ca66b064eb2f86f77ccdda71facd",
+            "user_type": "treasurers"
+        }
     }
 ]

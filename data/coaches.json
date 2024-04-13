@@ -39,5 +39,16 @@
             "finished_classes": [],
             "upcoming_classes": []
         }
+    },
+    {
+        "5": {
+            "id": "5",
+            "username": "111",
+            "name": "111",
+            "password": "scrypt:32768:8:1$qchu6zIN8N0kc0Yz$2505d1f6d7d544c693d771e5c27cda067c12de4c766d164253d02c9acb60596a936a9bc0085b7f3921f39bd6cdef13df5e59d63acf56ae103d8dd7c6989113ba",
+            "user_type": "coaches",
+            "finished_classes": [],
+            "upcoming_classes": []
+        }
     }
 ]

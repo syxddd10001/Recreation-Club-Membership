@@ -13,6 +13,10 @@
       #Content {
           margin-top: 20px; /* can adjust number*/
       }
+      /* CSS style -> adds space for list of clubs */
+      #ClassDetails {
+          margin-top: 20px; /* can adjust number*/
+      }
       /* CSS style for the white rectangle */
       .classListContainer {
           background-color: white;
@@ -20,7 +24,7 @@
           border-radius: 10px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
           width: 30%; /* Adjust the width as needed */
-          margiin: auto;
+
       }
 
       nav {
@@ -43,6 +47,14 @@
             margin-bottom: 20px;
             width: 30%; /* Adjust the width as needed */
       }
+      #info{
+        border: 1px solid black;
+        border-radius: 10px 30px;
+        padding: 10px;
+        background-color: #e3e3e3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+      }
   </style>
   </head>
 
@@ -60,60 +72,41 @@
        <!-- Navigation links -->
        <nav>
         <a href="/login">Sign Out</a>
-        <a href="/statements">Statements</a>
-        <a href="/members"> Club Members</a>
-        <a href="/home_treasures">Classes</a> <!-- should lead to current home treasurer page-->
+        <a href="/statements.html">Statements</a>
+        <a href="/members.html"> Club Members</a>
+        <a href="/home_treasures.html">Classes</a> 
     </nav>
 
 
-
-          <div id="welcomeBlock"> <!-- Yellow block for welcome message -->
-              <h2>Welcome <span>{{userInfo.name}}</span>!</h2>
-              <h3>This is your treasurer homepage!</h3>
+    <div class="classListContainer">
+            <h2>Revenues</h2>
+            {% for revenue in allRevenues %}
+                    <p id="info">{{revenue.date}}, {{revenue.title}}:
+                      <br>
+                       Amount - {{revenue.amount}}, Due Date - {{revenue.date_due}}, Status - {{revenue.status}}</p>
+            {% endfor %}
+            <h2>Expenses</h2>
+            {% for expense in allExpenses %}
+                    <p id="info">{{expense.date}}, {{expense.title}}:
+                      <br>
+                      Amount - {{expense.amount}}, Due Date - {{expense.date_due}}, Status - {{expense.status}}</p>
+            {% endfor %}
           </div>
 
-
-          <h2>All Upcoming Classes</h2>
-
-
-      <div class="classListContainer">
-        <div id="Content"></div>
-          {% for class in allClasses %}   
-          <p>{{class.coach}} - {{class.time}}, {{class.date}}
-            <button class="edit" onclick="editClass('{{class.id}}', '{{class.coach}}','{{class.date}}','{{class.time}}')">Edit Details</button>
-          </p>
-          {% endfor %}
-        </div>
-     
-      </div>
-        
 
 
    <!-- ______________________________________________________________________________________________________-->
 
         <script>
-        var classes = []; // store created classes
 
-          function editClass(id, coach, date, Time) {
-            // print class details in ClassDetails div
+          fetch('/statements', {
+        })
+        .then(response => response.text()){
+          console.log(response);
         }
-
-
-            // implement js method to get the username and render it in the home page
-            fetch('/home', {
-              method: 'GET',
-          })
-          .then(response => response.text())
-          .then(username => {
-            //const parsedData = JSON.parse(data);
-              document.getElementById("username").innerHTML = username
-              // Use the username as needed, e.g., display it in the UI
-          })
-          .catch(error => {
-              console.error('Error:', error);
-          });
-
-      
+        .catch(error => {
+            console.error('Error:', error);
+        });
             
         </script>
   </body>

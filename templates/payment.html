@@ -78,6 +78,17 @@
     .payNow{
         float: right
       }
+      nav {
+        background-color: #333333; /* background color */
+        color: white; /* Text color */
+        padding: 15px; /* padding around links */
+        text-align: center; /* center align */
+    }
+    nav a {
+        color: white; /* Link text color */
+        text-decoration: none; /* Remove underline on the text makes it pretty mwahaha */
+        margin-right: 20px; /* Add space between links */
+    }
   </style>
   </head>
 
@@ -103,7 +114,7 @@
                 <select name="class" id="class" required>
                     <option value="">--Select a class</option> //when user first visits it will not be stored in server
                     {% for class in unpaidClasses %}
-                        <option value={{class.id}}> class id: {{class.id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
+                        <option value={{class.class_id}}> class id: {{class.class_id}} {{class.coach}} on {{class.date}} at {{class.time}} </option>
                     {% endfor %}
                 </select>
             </div>
@@ -118,14 +129,14 @@
                 </select>
             </div>
             <div>
-                Card Number: * <input type="number" name="card_number" id="card_number"
-                    placeholder="5555-6666-7777-8888" required>
+                Card Number: * <input type="number" name="card_number" id="card_number" 
+                    placeholder="5555666677778888" required>
             </div>
             <div>
                 Expiration Date: * <input type="date" name="exp_date" id="exp_date" required>
             </div>
             <div>
-                CVV: * <input type="password" name="cvv" id="cvv" placeholder="123">
+                CVV: * <input type="password" name="cvv" id="cvv" placeholder="123" required>
             </div>
             <input onclick="payNow()" type="submit" value="Pay Now">
         </form>
@@ -139,13 +150,16 @@
             <div>
                 <h2>Unpaid Classes</h2>
                 {% for class in unpaidClasses %}
-                    <p>id: {{class.id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
+                    <p>id: {{class.class_id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
                <!-- <button class="payNow" onclick="payNow('{{class.coach}}', '{{class.time}}', '{{class.date}}')">Pay Now</button> -->
                 {% endfor %}
                  <!-- onclick attribute -->
             </div>
         <h2>Paid Classes</h2>
-        
+        {% for class in paidClasses %}
+                    <p>id: {{class.class_id}} {{class.coach}} - {{class.time}}, {{class.date}}</p>
+
+        {% endfor %}
         <div id="Content"></div>
        </div>
 
@@ -173,28 +187,37 @@
         pay = true;
         document.getElementById("paymentForm").removeAttribute("hidden");
         let class_id = document.getElementById("class").value;
-        console.log(class_id);
-
+        let cardnumber = document.getElementById("card_number").value;
+        let expdate = document.getElementById("exp_date").value;
+        let cvv = document.getElementById("cvv").value;
+        console.log(expdate)
         //send class info and payment info along with user
            fetch('/payclass', {
              method: 'POST',
              headers: {
                  'Content-Type': 'application/json',
              },
-             body: JSON.stringify({class_id: class_id}),
+             body: JSON.stringify({class_id: class_id, cardnumber:cardnumber, expdate:expdate, cvv:cvv}),
          })
          .then(response => response.json())
          .then(response => {
              // Handle response from the backend if needed
-             console.log(response);
-            if (response.success) {
-                alert(response.message);  // this isnt working for some reason
-                window.location.href = "/home"; // make it so that it alerts the user the payment was successful 
-                                                // then redirects back to home
+             if (response.error){
+                console.log("unsuccessful");
+                alert(response.message);
+                window.location.href = "/payment";
+
+             }
+             if (response.success) {
+                console.log(response);
+                alert(response.message);  
+                window.location.href = "/home";
             }
+
          })
          .catch(error => {
-             console.error('Error:', error);
+            alert(response.message);
+            console.error('Error:', error);
          });
 
       }

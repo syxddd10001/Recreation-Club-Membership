@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 class User: 
     def __init__(self, id, username, name, password, user_type):
         self.id = id
@@ -67,7 +68,7 @@ class Coach(User):
         self.upcoming_classes=upcoming_classes or []
 
     def add_upcoming_class(self, class_data) -> bool:
-        if class_data is None or not isinstance(class_data, Classes):
+        if class_data is None:
             return False
         
         self.upcoming_classes.append(class_data)
@@ -89,8 +90,10 @@ class Coach(User):
     
 
 class Treasurer(User):
-    def __init__(self, id, username, name, password, user_type='treasurers', expenses=[], revenues=[]):
+    def __init__(self, id, username, name, password, user_type='treasurers'):
         super().__init__(id, username, name, password, user_type)
+
+        # ?? storing expenses and revenues locally on treasureres' account might be redundant since they are universal
 
 class Classes:
     def __init__(self, id, admin, coach, date, time, members=None, user_type="classes", messages=None):
@@ -119,22 +122,12 @@ class Classes:
         return json.dumps(self.__dict__)  
 
 class Transaction:
-    def __init__(self, id, amount=0):
+    def __init__(self, id, title, status, transaction_type, date_due, user_type="transactions", amount=0, date=datetime.now().strftime("%m/%d/%Y")):
         self.id = id
+        self.title = title
+        self.status = status # paid or unpaid
+        self.user_type=user_type
+        self.transaction_type = transaction_type # expense or revenue
         self.amount = amount
-
-class Expense(Transaction):
-    def __init__(self, id, amount, expense_type):
-        super().__init__(id, amount)
-        self.expense_type = expense_type
-
-    def increment_amount(self, inc_amount):
-        self.amount += inc_amount
-
-class Income(Transaction):
-    def __init__(self, id, amount, income_type):
-        super().__init__(id, amount)
-        self.expense_type = income_type
-
-    def increment_amount(self, inc_amount):
-        self.amount += inc_amount
+        self.date = date
+        self.date_due = date_due
